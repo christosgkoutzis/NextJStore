@@ -2,7 +2,7 @@
 "use client" 
 
 // Import the fetchCategoriesAndCreateObject function
-import fetchCategoriesAndCreateObject from "@/config";
+import fetchCategoriesAndCreateObject from "@/config/fakeapi-fetch";
 import { Button } from "./ui/button";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -56,7 +56,7 @@ const NavItem: React.FC<NavItemProps> = ({ isAnyOpen, category, handleOpen, isOp
                   {category.info.map((item) => (
                     <div key={item.name} className="group relative text-base sm:text-sm">
                       <div className="relative aspect-video overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                        <Image src={item.image} alt='Category Image' fill className='object-cover object-center'/>
+                        <Image src={item.image} alt={item.name} fill className='object-cover object-center'/>
                       </div>
                       <Link href={item.href} className='mt-6 block font-medium text-gray-900'>{item.name}</Link>
                       <p className='mt-1' aria-hidden='true'>Shop now</p>

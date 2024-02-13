@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import NavItem from "./NavItem"
-import fetchCategoriesAndCreateObject from "@/config"
+import fetchCategoriesAndCreateObject from "@/config/fakeapi-fetch"
 import { useOnClickOutside } from "@/app/hooks/use-on-click-outside"
 
 const NavItems = () => {
