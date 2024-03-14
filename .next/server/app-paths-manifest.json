@@ -1,0 +1,6 @@
+{
+  "/(auth)/register/page": "app/(auth)/register/page.js",
+  "/(auth)/verified/page": "app/(auth)/verified/page.js",
+  "/page": "app/page.js",
+  "/api/cookie/route": "app/api/cookie/route.js"
+}

@@ -1,7 +1,8 @@
 import { sendEmail } from "@/lib/mailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { encrypt } from "./session";
 
- export async function createCookie(username: string, email: string, password: string, id: number) {
+ export async function createToken(username: string, email: string, password: string, id: number) {
   // Creates user's verification JWT token in WordPress headless CMS
   const wpAppCredentials = {
     username: process.env.NEXT_PUBLIC_WP_ADMIN_USERNAME,
@@ -17,14 +18,14 @@ import SMTPTransport from "nodemailer/lib/smtp-transport";
     },
   });
   const json = await tokenFetch.json()
-  console.log('Token:', json)
   if(tokenFetch.ok){
-    const token = json.token
-
+    // Encrypts token using jose and secret key (session.ts)
+    const encryptedToken = await encrypt(json);
+    console.log('Encrypted:', encryptedToken)
     // Sends a verification email to the user
-    const mailer: SMTPTransport.SentMessageInfo = await sendEmail(username, email, 'VERIFY', token, id);
+    const mailer: SMTPTransport.SentMessageInfo = await sendEmail(username, email, 'VERIFY', encryptedToken, id);
     if (mailer){
-      return token;
+      return json;
       }
     else{
       console.error('Error while creating the cookie.')

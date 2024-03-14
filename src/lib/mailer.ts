@@ -20,7 +20,8 @@ export const sendEmail = async(username: string, email: string, emailType: strin
     // Read the content of the HTML file (HTML template from unlayer.com) and replace its placeholders with variables
     let htmlContent = await fs.readFile('public/email-template.html', 'utf-8');
     htmlContent = htmlContent.replace('${USERNAME}', username);
-    htmlContent = htmlContent.replace('${VERIFICATION_LINK}', process.env.NEXT_PUBLIC_DEPLOY_URL + `api/cookie?id=${id}&token=${token}`);
+    htmlContent = htmlContent.replace('${VERIFICATION_LINK}', process.env.NEXT_PUBLIC_DEPLOY_URL + `api/verify?id=${id}&token=${token}`);
+    htmlContent = htmlContent.replace('${HOMEPAGE}', `${process.env.NEXT_PUBLIC_DEPLOY_URL}`);
     // Configures email introducing message according to emailType
     let message: string
     if (emailType === 'VERIFY') {

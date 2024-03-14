@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+/*import { cookies } from "next/headers"; */
+import { NextRequest, NextResponse } from "next/server"; 
 
 // Secretkey used for encryption (usually an environmental variable)
 const secretKey = process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY;
@@ -22,7 +22,7 @@ export async function decrypt(input: string): Promise<any> {
   return payload;
 }
 
-export async function login(formData: FormData) {
+ /*export async function login(formData: FormData) {
   // Verifies the credentials and gets the user from the CMS (username accepts also email value as a REST API parameter)
   const credentials = { username: formData.get("email"), password: formData.get("password") };
   const res = await fetch(process.env.NEXT_PUBLIC_JWT_BASE + 'token', {
@@ -55,10 +55,10 @@ export async function getSession(cookiename: string) {
   const session = cookies().get(cookiename)?.value;
   if (!session) return null;
   return await decrypt(session);
-}
+} */
 
 // Used along with middleware function to refresh cookie expiration time
-export async function updateSession(request: NextRequest) {
+/*export async function updateSession(request: NextRequest) {
   const session = request.cookies.get("session")?.value;
   if (!session) return;
 
@@ -73,4 +73,4 @@ export async function updateSession(request: NextRequest) {
     expires: parsed.expires,
   });
   return res;
-}
+} */
