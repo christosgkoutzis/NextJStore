@@ -9,7 +9,7 @@ const Header = () => {
   // dummy variable to hold the existense of user session (will be deleted when user feature is added)
   const user = null;
   return(
-    <div className="bg-white sticky z-60 top-0 inset-x-0 h-16">
+    <div className="bg-white sticky z-50 top-0 inset-x-0 h-16">
       <header className="relative bg-white">
         <MaxWidthWrapper>
           <div className="border-b border-gray-200">

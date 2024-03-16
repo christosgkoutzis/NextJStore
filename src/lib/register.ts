@@ -15,7 +15,7 @@ export async function register(credentials: UserLog) {
     const user = await wp_fetch('users', 'POST', credentials);
     if (user.id) {
       // Creates a JWT token and sends a verification email
-      const cookie = await createToken(credentials.username, credentials.email, credentials.password, user.id);
+      const cookie = await createToken(credentials.username, credentials.password, user.id, credentials.email);
       // Converts the 1st parameter to an Integer using the decimal (base-10 as 2nd parameter) system
       return cookie;
     } 

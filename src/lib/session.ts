@@ -1,6 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
-/*import { cookies } from "next/headers"; */
-import { NextRequest, NextResponse } from "next/server"; 
+import { createToken } from "./verify";
 
 // Secretkey used for encryption (usually an environmental variable)
 const secretKey = process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY;
@@ -21,6 +20,26 @@ export async function decrypt(input: string): Promise<any> {
   });
   return payload;
 }
+
+export async function login(credentials: {username: string, password: string}) {
+  try {
+    // Creates a JWT token and sends a verification email
+    const token = await createToken(credentials.username, credentials.password);
+    const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
+      method: 'POST',
+      body: token,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const session = await res.json()
+    return session;
+    } catch (error) {
+      console.error('Error logging in:', error);
+      return {error};
+  }
+}
+
 
  /*export async function login(formData: FormData) {
   // Verifies the credentials and gets the user from the CMS (username accepts also email value as a REST API parameter)

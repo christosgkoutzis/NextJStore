@@ -104,7 +104,7 @@ useEffect(() => {
           <Link className={buttonVariants({
             variant: 'link',
             className: 'gap-1.5'})} 
-            href='sign-in'>
+            href='login'>
             Already have an account? Sign-in 
           </Link>
         </div>
