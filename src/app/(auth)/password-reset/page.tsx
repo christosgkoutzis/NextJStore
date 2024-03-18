@@ -7,26 +7,41 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import Link from 'next/link'
 import { useState, useEffect } from 'react'
 // useRouter for inner navigation in client components
-import { useRouter } from 'next/navigation'
-import { login } from '@/lib/session'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { wp_fetch } from '@/lib/wp-fetch'
+
 
 const Page = () => {
 // Declaring hooks at the top of page function components to avoid conflicts
-const router = useRouter()
-const [username, setUsername] = useState(String);
+const router = useRouter();
 const [password, setPassword] = useState(String);
+const [confirmPassword, setConfirmPassword] = useState(String);
 const [formSubmitted, setFormSubmitted] = useState(Boolean);
 const [hasErrors, sethasErrors] = useState(String);
 
+// Fetches token and user's id URL params
+const searchParams = useSearchParams();
+const id = searchParams.get('id');
+
 // Function that handles the incorrect submits of the form
 const clientErrors = () => {
-  if (!username || !password){
+  if (!password || !confirmPassword){
     sethasErrors('All input fields are required to be filled.') 
     return true;
   }
+  // Check if the password and confirm password match
+  if (password !== confirmPassword) {
+    sethasErrors('Password and confirm password values are not equal.')
+    return true;
+  }
+  // Checks for password length
+  if (password.length < 8){
+    sethasErrors('Password must be 8 characters or longer.')
+    return true;
+  }
+  return false;
 }
 
 // Handle form submission
@@ -38,17 +53,16 @@ const handleSubmit = async (event: { preventDefault: () => void }) => {
     return false;
   }
   // Calls the login helper function with form values
-  const loginResult = await login({username, password});
-  setFormSubmitted(true);
-  // If the result includes error keys, renders error message, else sets errors as empty string.
-  if (loginResult.error){
-    sethasErrors(loginResult.error);
-    return false;
+  const resetPassword = await wp_fetch(`users/${id}`, 'POST', {password});
+  if(resetPassword.id){
+    setFormSubmitted(true);
+    sethasErrors('');    
   }
   else{
-    sethasErrors('');
-  } 
-  return true;
+    setFormSubmitted(true);
+    sethasErrors('Internal server error. Please try again.');
+    return false;
+  }
 };
 
 useEffect(() => {
@@ -75,33 +89,27 @@ useEffect(() => {
     <> 
     <div className="container relative flex pt-12 flex-col items-center justify-center lg:px-0">
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-      {(formSubmitted) ? (( hasErrors == '') ? <SuccessAlert successMessage='User logged in successfully. Redirecting to homepage.' /> : <ErrorAlert errorMessage={hasErrors} />)  : null}
+      {(formSubmitted) ? (( hasErrors == '') ? <SuccessAlert successMessage='Password changed successfully. Redirecting to homepage.' /> : <ErrorAlert errorMessage={hasErrors} />)  : null}
         <div className="flex flex-col items-center space-y-2 text-center">
           <Icons.site_logo className='h-20 w-20'/>
-          <h3 className="text-2xl font-bold">Welcome to NextJStore</h3>
+          <h3 className="text-2xl font-bold">Reset your NextJStore account password</h3>
         </div>
         <div className="grid gap-6">
           <form onSubmit= {handleSubmit}>
             <div className="grid gap-2">
               <div className="grid gap-1 py-2">
                 {/* htmlFor is like for in HTML and it assossiates the Label with the Input */}
-                <Label htmlFor='username'>Username</Label>
-                <Input id='username' name='username' className={cn({'focus-visible:ring-red-500': hasErrors })} placeholder='Johndoe' type='text' value={username} onChange={(e) => setUsername(e.target.value)} required />
+                <Label htmlFor='password'>New Password</Label>
+                <Input id='password' name='password' className={cn({'focus-visible:ring-red-500': hasErrors })} placeholder='Password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} required/>
               </div>
               <div className="grid gap-1 py-2">
                 {/* htmlFor is like for in HTML and it assossiates the Label with the Input */}
-                <Label htmlFor='password'>Password</Label>
-                <Input id='password' name='password' className={cn({'focus-visible:ring-red-500': hasErrors })} placeholder='Password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} required/>
+                <Label htmlFor='confirm-password'>Confirm New Password</Label>
+                <Input id='confirm-password' name='confirm-password' className={cn({'focus-visible:ring-red-500': hasErrors })} placeholder='Confirm your Password' type='password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
               </div>
-              <Button type="submit" className='mt-6 mb-6'>Log in</Button>
+              <Button type="submit" className='mt-6 mb-6'>Change password</Button>
             </div>
           </form>
-          <Link className={buttonVariants({
-            variant: 'link',
-            className: 'gap-1.5'})} 
-            href='/forgot-password'>
-            Forgot your password? Recover it here.  
-          </Link>
         </div>
       </div>
     </div>
@@ -109,4 +117,4 @@ useEffect(() => {
   ) 
 } 
 
-export default Page
+export default Page 

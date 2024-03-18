@@ -25,18 +25,21 @@ export async function login(credentials: {username: string, password: string}) {
   try {
     // Creates a JWT token and sends a verification email
     const token = await createToken(credentials.username, credentials.password);
+    if (token.error){
+      return {error: token.error};
+    }
     const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
       method: 'POST',
-      body: token,
+      body: JSON.stringify({token}),
       headers: {
         'Content-Type': 'application/json'
       }
     });
     const session = await res.json()
-    return session;
+    return session; 
     } catch (error) {
       console.error('Error logging in:', error);
-      return {error};
+      return {error: 'Internal Server Error'};
   }
 }
 

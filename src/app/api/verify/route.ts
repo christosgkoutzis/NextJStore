@@ -14,12 +14,17 @@ export async function GET(req: NextRequest) {
     }
     // Decrypts token to send it for verification
     const decrypted = await decrypt(token);
-    const decryptedToken = decrypted.token;
-    // if there is no id param returns decrypted token as JSON for user authentication
+    // if there is no id param, redirects to /password-reset route to change user password
     if (!id){
-      return new NextResponse(JSON.stringify(decryptedToken), {status: 200})
+      if (decrypted.id){
+        return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `password-reset?id=${decrypted.id}`))
+      }
+      else{
+        return new NextResponse(JSON.stringify({error: 'Error decrypting the token.'}), {status: 500});
+      }
     }
     // If there is id param, redirects to /verified route to export email verification result
+    const decryptedToken = decrypted.token;
     return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `verified?id=${id}&token=${decryptedToken}`))
 
   // Exception error handler

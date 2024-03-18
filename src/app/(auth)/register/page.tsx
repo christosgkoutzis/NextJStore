@@ -11,10 +11,12 @@ import { cn } from '@/lib/utils'
 import { register } from '@/lib/register'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { redirect } from 'next/navigation'
+// useRouter for inner navigation in client components
+import { useRouter } from 'next/navigation'
 
 const Page = () => {
-  
+// Declaring hooks at the top of page function components to avoid conflicts  
+const router = useRouter()
 const [username, setUsername] = useState(String);
 const [email, setEmail] = useState(String);
 const [password, setPassword] = useState(String);
@@ -50,6 +52,7 @@ const clientErrors = () => {
     sethasErrors('Password and confirm password values are not equal.')
     return true;
   }
+  // Checks if terms checkbox is checked
   if (!termsAccepted){
     sethasErrors('You must accept our terms and conditions to procceed.')
     return true;
@@ -86,7 +89,7 @@ useEffect(() => {
     return () => clearTimeout(timer);
   }
   else if (formSubmitted && hasErrors === '') {
-    const timer = setTimeout(() => { redirect('/verified')}, 5000);
+    const timer = setTimeout(() => { router.push('/verified')}, 5000);
     return () => {
       clearTimeout(timer)
      }
