@@ -1,5 +1,8 @@
 import { SignJWT, jwtVerify } from "jose";
-import { createToken } from "./verify";
+//import { createToken } from "./lib/verify";
+/*import { cookies } from "next/headers";
+import { redirect } from "next/dist/server/api-utils";
+import { NextResponse } from "next/server"; */
 
 // Secretkey used for encryption (usually an environmental variable)
 const secretKey = process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY;
@@ -19,6 +22,45 @@ export async function decrypt(input: string): Promise<any> {
     algorithms: ["HS256"],
   });
   return payload;
+} 
+
+export async function createToken(username: string, password: string) {
+  // Creates user's verification JWT token in WordPress headless CMS
+  try {
+    const wpAppCredentials = {
+      username: process.env.NEXT_PUBLIC_WP_ADMIN_USERNAME,
+      password: process.env.NEXT_PUBLIC_WP_REGISTER_APP_PASSWORD,
+    };
+    const encryptedWpAppCredentials = btoa(`${wpAppCredentials.username}:${wpAppCredentials.password}`);
+    const tokenFetch = await fetch(process.env.NEXT_PUBLIC_JWT_BASE + 'token', {
+      method: 'POST',
+      body: JSON.stringify({username, password}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${encryptedWpAppCredentials}`
+      },
+    });
+    const json = await tokenFetch.json()
+    if(tokenFetch.ok){
+      // Encrypts token using jose and secret key (session.ts)
+      const encryptedToken = await encrypt(json);
+  
+      // Sends a verification email to the user if there are email and id parameters in the function
+        return {token: encryptedToken};
+    }
+    else if (tokenFetch.status == 403){
+      console.error({error: 'Wrong credentials.'});
+      return {error: 'Wrong username or password. Please try again.'};
+    }
+    else {
+      console.error({error: 'Unexpected error while fetching token. Please try again.'});
+      return {error: 'Unexpected error while fetching token. Please try again.'};
+    }
+  }
+  catch(error){
+    console.error({error: 'Error while fetching the token from CMS'});
+    return {error: 'Error while fetching the token from CMS'};
+  } 
 }
 
 export async function login(credentials: {username: string, password: string}) {
@@ -26,11 +68,11 @@ export async function login(credentials: {username: string, password: string}) {
     // Creates a JWT token and sends a verification email
     const token = await createToken(credentials.username, credentials.password);
     if (token.error){
-      return {error: token.error};
+      return { token };
     }
     const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
       method: 'POST',
-      body: JSON.stringify({token}),
+      body: JSON.stringify(token),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -42,6 +84,29 @@ export async function login(credentials: {username: string, password: string}) {
       return {error: 'Internal Server Error'};
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
  /*export async function login(formData: FormData) {

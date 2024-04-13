@@ -1,11 +1,15 @@
 import { sendEmail } from "@/lib/mailer";
+import { createToken } from "../session";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
-import { encrypt } from "./session";
 
- export async function createToken(username: string, password: string, id?: number, email?: string) {
+ export async function emailToken(username: string, password: string, id: number, email: string) {
   // Creates user's verification JWT token in WordPress headless CMS
   try {
-    const wpAppCredentials = {
+    const encryptedToken = await createToken(username, password);
+    if (encryptedToken.error){
+      return {error: encryptedToken.error};
+    }
+    /*const wpAppCredentials = {
       username: process.env.NEXT_PUBLIC_WP_ADMIN_USERNAME,
       password: process.env.NEXT_PUBLIC_WP_REGISTER_APP_PASSWORD,
     };
@@ -23,25 +27,25 @@ import { encrypt } from "./session";
       // Encrypts token using jose and secret key (session.ts)
       const encryptedToken = await encrypt(json);
   
-      // Sends a verification email to the user if there are email and id parameters in the function
-      if (email && id){
-        const mailer: SMTPTransport.SentMessageInfo = await sendEmail(username, email, 'VERIFY', encryptedToken, id);
-        if (mailer){
-          return json;
-          }
-        else{
-          console.error('Error while sending the verification email.')
-          return ('Error while sending the verification email.')
+      // Sends a verification email to the user if there are email and id parameters in the function */
+    if (encryptedToken.token){ 
+      const mailer:SMTPTransport.SentMessageInfo  = await sendEmail(username, email, 'VERIFY', encryptedToken.token, id);
+      if (mailer){
+        return encryptedToken;
         }
+      else{
+        console.error('Error while sending the verification email.')
+        return ('Error while sending the verification email.')
       }
+      /*}
       else {
         return encryptedToken;
-      }
+      } */
     }
-    else if (tokenFetch.status == 403){
+   /* else if (tokenFetch.status == 403){
       console.error({error: 'Wrong credentials.'});
       return {error: 'Wrong username or password. Please try again.'};
-    } 
+    } */ 
   }
   catch(error){
     console.error({error: 'Error while fetching the token from CMS'});
