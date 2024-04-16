@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react'
 // useRouter for inner navigation in client components
 import { useRouter } from 'next/navigation'
 import { login } from '@/session'
+import Protected from '@/components/Protected'
 
 const Page = () => {
 // Declaring hooks at the top of page function components to avoid conflicts
@@ -109,4 +110,4 @@ useEffect(() => {
   ) 
 } 
 
-export default Page;
+export default Protected(Page);

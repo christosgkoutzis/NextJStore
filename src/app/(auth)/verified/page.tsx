@@ -7,6 +7,7 @@ import { wp_fetch } from "@/lib/wp-fetch";
 import { verify } from "@/lib/verify";
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react'
+import Protected from "@/components/Protected";
 
 const Verified = () => {
   // Declares state of page's text
@@ -74,4 +75,4 @@ const Verified = () => {
   );
 } 
 
-export default Verified;
+export default Protected(Verified);

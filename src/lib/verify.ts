@@ -35,12 +35,16 @@ import SMTPTransport from "nodemailer/lib/smtp-transport";
         }
       else{
         console.error('Error while sending the verification email.')
-        return ('Error while sending the verification email.')
+        return ({error: 'Error while sending the verification email.'})
       }
       /*}
       else {
         return encryptedToken;
       } */
+    }
+    else {
+      console.error({error: 'Error while fetching the token from CMS'});
+      return {error: 'Error while fetching the token from CMS'};
     }
    /* else if (tokenFetch.status == 403){
       console.error({error: 'Wrong credentials.'});

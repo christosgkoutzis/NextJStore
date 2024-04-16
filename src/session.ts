@@ -68,7 +68,7 @@ export async function login(credentials: {username: string, password: string}) {
     // Creates a JWT token and sends a verification email
     const token = await createToken(credentials.username, credentials.password);
     if (token.error){
-      return { token };
+      return { 'error': `${token.error}` };
     }
     const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
       method: 'POST',
