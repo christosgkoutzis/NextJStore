@@ -12,7 +12,6 @@ import { useState, useEffect } from 'react'
 // useRouter for inner navigation in client components
 import { useRouter } from 'next/navigation'
 import { login } from '@/session'
-import Protected from '@/components/Protected'
 
 const Page = () => {
 // Declaring hooks at the top of page function components to avoid conflicts
@@ -65,7 +64,7 @@ useEffect(() => {
   else if (formSubmitted && hasErrors === '') {
     const successTimer = setTimeout(() => { 
       router.push('/'); 
-    }, 5000);
+    }, 4000);
     return () => {
       clearTimeout(successTimer);
      }
@@ -110,4 +109,4 @@ useEffect(() => {
   ) 
 } 
 
-export default Protected(Page);
+export default Page;

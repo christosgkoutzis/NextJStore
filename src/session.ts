@@ -1,8 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
-//import { createToken } from "./lib/verify";
-/*import { cookies } from "next/headers";
-import { redirect } from "next/dist/server/api-utils";
-import { NextResponse } from "next/server"; */
+import { wp_fetch } from "./lib/wp-fetch";
 
 // Secretkey used for encryption (usually an environmental variable)
 const secretKey = process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY;
@@ -18,11 +15,31 @@ export async function encrypt(payload: any) {
 }
 
 export async function decrypt(input: string): Promise<any> {
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ["HS256"],
-  });
-  return payload;
-} 
+  try {
+    const { payload } = await jwtVerify(input, key, {
+      algorithms: ["HS256"],
+    });
+    return payload;
+  } catch (error) {
+    console.error('Error while decrypting the token:', error)
+    return {error};
+  }
+}
+
+export async function infoFetch(username: string, token: string){
+  try {
+      // Fetches userinfo from CMS (limits results to 1 to avoid multiple usernames)
+      const infoFetch = await wp_fetch(`users?search=${username}&context=edit&per_page=1`,'GET');
+      const userInfo = {token: token, id: infoFetch[0].id, email: infoFetch[0].email, username: infoFetch[0].username, role: infoFetch[0].roles[0]};
+      console.log('Infofetch:', userInfo)
+      return userInfo;
+    }
+     catch(error){
+      console.error({error});
+      return {error: 'Error while fetching the token from CMS.'};
+    } 
+}
+
 
 export async function createToken(username: string, password: string) {
   // Creates user's verification JWT token in WordPress headless CMS
@@ -41,25 +58,31 @@ export async function createToken(username: string, password: string) {
       },
     });
     const json = await tokenFetch.json()
+    console.log('tokenfetch response wp:', json)
     if(tokenFetch.ok){
-      // Encrypts token using jose and secret key (session.ts)
-      const encryptedToken = await encrypt(json);
-  
+      // Gets JWT token from response object
+      const WPJWTToken = json.token;
+      const userInfo = await infoFetch(username, WPJWTToken);
+      if('error' in userInfo){
+        return {error: 'Error while fetching user data.'}
+      }
+      // Encrypts the userinfo object
+      const encryptedUserInfo = await encrypt(userInfo);
+      console.log('encrypted user info:', encryptedUserInfo)
       // Sends a verification email to the user if there are email and id parameters in the function
-        return {token: encryptedToken};
+      return encryptedUserInfo;
     }
     else if (tokenFetch.status == 403){
       console.error({error: 'Wrong credentials.'});
       return {error: 'Wrong username or password. Please try again.'};
     }
     else {
-      console.error({error: 'Unexpected error while fetching token. Please try again.'});
-      return {error: 'Unexpected error while fetching token. Please try again.'};
+      console.error({error: 'Error while fetching the token from CMS.'});
+      return {error: 'Error while fetching the token from CMS.'};
     }
-  }
-  catch(error){
-    console.error({error: 'Error while fetching the token from CMS'});
-    return {error: 'Error while fetching the token from CMS'};
+  } catch(error){
+    console.error({error});
+    return {error: 'Error while fetching the token from CMS.'};
   } 
 }
 
@@ -67,8 +90,10 @@ export async function login(credentials: {username: string, password: string}) {
   try {
     // Creates a JWT token and sends a verification email
     const token = await createToken(credentials.username, credentials.password);
-    if (token.error){
-      return { 'error': `${token.error}` };
+    console.log('token in login:', token, typeof token)
+    // If token does not contain an encrypted token but an error object
+    if (typeof token !== 'string'){
+      return {error: `${token.error}`};
     }
     const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
       method: 'POST',
@@ -85,8 +110,37 @@ export async function login(credentials: {username: string, password: string}) {
   }
 }
 
-
-
+/*export async function getSession(path: string){
+    try {
+      const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const userInfo = await res.json();
+      if (userInfo.token) {
+        const decryptedToken = userInfo.token;
+        const result = await verify(decryptedToken);
+        if (typeof result === "number"){
+          if (userInfo.role === 'subscriber'){
+            console.log(userInfo)
+            return userInfo;
+          }
+          else {
+            return {error: 'Verify your email address to activate your account.'}
+          }
+        }
+        else{
+          return {error: result}
+        }
+      }
+    } catch (error) {
+    console.error('Error during getting session:', error);
+    return {error};
+  }
+}
+*/
 
 
 

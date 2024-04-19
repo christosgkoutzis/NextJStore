@@ -72,7 +72,7 @@ const handleSubmit = async (event: { preventDefault: () => void }) => {
   // Calls the register helper function with form values
   const registrationResult = await register({username, email, password });
   // If it's a string, it holds the error message else it's a number holding the user id (register.ts)
-  if (registrationResult.error){
+  if (typeof registrationResult === 'object'){
     sethasErrors(registrationResult.error);
   }
   else{
@@ -89,7 +89,7 @@ useEffect(() => {
     return () => clearTimeout(timer);
   }
   else if (formSubmitted && hasErrors === '') {
-    const timer = setTimeout(() => { router.push('/verified')}, 5000);
+    const timer = setTimeout(() => { router.push('/login')}, 4000);
     return () => {
       clearTimeout(timer)
      }
@@ -157,4 +157,4 @@ useEffect(() => {
   ) 
 } 
 
-export default Page
+export default Page;

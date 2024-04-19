@@ -7,7 +7,6 @@ import { wp_fetch } from "@/lib/wp-fetch";
 import { verify } from "@/lib/verify";
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react'
-import Protected from "@/components/Protected";
 
 const Verified = () => {
   // Declares state of page's text
@@ -38,14 +37,13 @@ const Verified = () => {
               setButtonRedirect('/');
             }
           } catch (error) {
-            
             setVerified('Error while communicating with user database. Please try again.');
             setButtonText('Return to register form');
             setButtonRedirect('/register');
           }
         }
       }
-      return false;; 
+      return false; 
     }
 
     // Runs isVerified() function after the component renders
@@ -75,4 +73,4 @@ const Verified = () => {
   );
 } 
 
-export default Protected(Verified);
+export default Verified;

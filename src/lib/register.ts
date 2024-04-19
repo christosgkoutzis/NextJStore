@@ -1,5 +1,5 @@
 import { wp_fetch } from '@/lib/wp-fetch';
-import { emailToken } from '../lib/verify';
+import { emailToken } from '../lib/mailer/emailToken';
 
 interface UserLog {
   username: string;
@@ -16,7 +16,6 @@ export async function register(credentials: UserLog) {
     if (user.id) {
       // Creates a JWT token and sends a verification email
       const token = await emailToken(credentials.username, credentials.password, user.id, credentials.email);
-      // Converts the 1st parameter to an Integer using the decimal (base-10 as 2nd parameter) system
       return token;
     } 
     else {

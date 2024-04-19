@@ -1,10 +1,10 @@
-'use server'
+"use server"
 
 import nodemailer from 'nodemailer';
 // File System package for reading files (reads from fs/promises for support of async reading)
 import fs  from 'fs/promises';
 
-// function that sends email through nodemailer
+// Sends emails through nodemailer library
 export const sendEmail = async(username: string, email: string, emailType: string, token: string, id?: number) => {
   try {   
     // transporter sends email through nodemailer
@@ -23,6 +23,7 @@ export const sendEmail = async(username: string, email: string, emailType: strin
     // Configures email introducing message according to emailType
     let message, welcome: string
     if (emailType === 'VERIFY') {
+      console.log('Email token:', token)
       htmlContent = htmlContent.replace('${VERIFICATION_LINK}', process.env.NEXT_PUBLIC_DEPLOY_URL + `api/verify?id=${id}&token=${token}`);
       welcome = 'Welcome to NextJStore !! Your Next Stop for shopping !!'
       message = 'We want to thank you for registering in NextJStore and we have good news for you. You are only one step away from shopping from your Next ultimate shopping destination.&nbsp;'

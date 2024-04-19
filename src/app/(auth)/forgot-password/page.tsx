@@ -11,8 +11,8 @@ import { useState, useEffect } from 'react'
 // useRouter for inner navigation in client components
 import { useRouter } from 'next/navigation'
 import { wp_fetch } from '@/lib/wp-fetch'
-import { encrypt } from '@/lib/session'
-import { sendEmail } from '@/lib/mailer'
+import { encrypt, infoFetch } from '@/session'
+import { sendEmail } from '@/lib/mailer/mailer'
 import { Checkbox } from '@/components/ui/checkbox'
 
 const Page = () => {
@@ -46,25 +46,30 @@ const handleSubmit = async (event: { preventDefault: () => void }) => {
     return false;
   }
   // Calls the login helper function with form values
-  const userInfo = await wp_fetch(`users?search=${email}`, 'GET');
-  if(userInfo.length == 1 && userInfo[0].id && userInfo[0].name){
-    const payload = {email, username: userInfo[0].name, id: userInfo[0].id}
-    const token = await encrypt(payload)
-    const mailer = await sendEmail(userInfo[0].name, email, 'FORGOT', token)
-    if(token && mailer){
-      setFormSubmitted(true);
-      sethasErrors('');
-      return true;
-    }
-    else{
-      setFormSubmitted(true);
-      sethasErrors('Error creating token and sending verification email. Please try again later.');
-      return false;
-    }
+  const userInfo = await infoFetch(email, 'forgot-password');
+  if('error' in userInfo){
+    setFormSubmitted(true);
+    sethasErrors(userInfo.error);
+    return false;
+  }
+  const token = await encrypt(userInfo)
+  const mailer = await sendEmail(userInfo.username, email, 'FORGOT', token)
+  if(token && mailer){
+    const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
+      method: 'POST',
+      body: JSON.stringify(token),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const session = await res.json()
+    setFormSubmitted(true);
+    sethasErrors('');
+    return true;
   }
   else{
     setFormSubmitted(true);
-    sethasErrors('Error fetching data from user database. Please ensure correct email address.');
+    sethasErrors('Error creating token and sending verification email. Please try again later.');
     return false;
   }
 };

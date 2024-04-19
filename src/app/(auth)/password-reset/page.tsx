@@ -56,7 +56,15 @@ const handleSubmit = async (event: { preventDefault: () => void }) => {
   const resetPassword = await wp_fetch(`users/${id}`, 'POST', {password});
   if(resetPassword.id){
     setFormSubmitted(true);
-    sethasErrors('');    
+    sethasErrors('');
+    const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const deletedSession = await res.json()
+    return true;    
   }
   else{
     setFormSubmitted(true);

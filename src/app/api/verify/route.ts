@@ -17,6 +17,14 @@ export async function GET(req: NextRequest) {
     // if there is no id param, redirects to /password-reset route to change user password
     if (!id){
       if (decrypted.id){
+        const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
+          method: 'POST',
+          body: JSON.stringify(decrypted),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }); 
+        await res.json();
         return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `password-reset?id=${decrypted.id}`))
       }
       else{
