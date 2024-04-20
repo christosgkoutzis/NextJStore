@@ -31,10 +31,23 @@ const Verified = () => {
         else {
           try {
             const authenticated = await wp_fetch(`users/${id}?roles=subscriber`,'PUT', {'roles': 'subscriber'});
+            const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
             if(authenticated.id){
-              setVerified('Your registration to NextJStore has been verified.');
-              setButtonText('Please return to homepage and login with your account.');
-              setButtonRedirect('/');
+              if(res.ok){
+                setVerified('Your registration to NextJStore has been verified.');
+                setButtonText('Please return to homepage and login with your account.');
+                setButtonRedirect('/');
+              }
+              else{
+                setVerified('Error deleting temporary session.');
+                setButtonText('Try verifying your account later.');
+                setButtonRedirect('/');
+              }
             }
           } catch (error) {
             setVerified('Error while communicating with user database. Please try again.');

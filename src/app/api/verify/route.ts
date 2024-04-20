@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
           }
         }); 
         await res.json();
-        return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `password-reset?id=${decrypted.id}`))
+        return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `${decrypted.username}/password-reset?id=${decrypted.id}`))
       }
       else{
         return new NextResponse(JSON.stringify({error: 'Error decrypting the token.'}), {status: 500});
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     }
     // If there is id param, redirects to /verified route to export email verification result
     const decryptedToken = decrypted.token;
-    // Logs in through cookie the user to pass middleware authorization
+    // Creates temporary session to the user to pass middleware authorization
 
     /*const tokenValidate = await fetch(process.env.NEXT_PUBLIC_JWT_BASE + 'token/validate', {
       method: 'POST',
@@ -43,24 +43,22 @@ export async function GET(req: NextRequest) {
       },
     });  */
 
-   /* const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
+   const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
       method: 'POST',
-      body: JSON.stringify({token: `${decryptedToken}`}),
+      body: JSON.stringify(decrypted),
       headers: {
         'Content-Type': 'application/json'
       }
     });
-    if(res.ok){ */
-    return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `verified?id=${id}&token=${decryptedToken}`))
-   /* }
+    if(res.ok){ 
+    return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `${decrypted.username}/verified?id=${id}&token=${decryptedToken}`))
+    }
     else{
       console.error('Error creating the cookie');
       return new NextResponse(JSON.stringify({error: 'Error creating the cookie'}), {status: 500});
-    } */
+    } 
 
-  // Exception error handler
-  } 
-  catch (error) {
+  } catch (error) {
   console.error('Error during verification:', error);
   return new NextResponse(JSON.stringify({error}), {status: 500});
   }
