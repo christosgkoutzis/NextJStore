@@ -60,7 +60,7 @@ const clientErrors = () => {
   return false;
 }
 
-// Handle form submission
+// Handles form submission
 const handleSubmit = async (event: { preventDefault: () => void }) => {
   event.preventDefault()
   sethasErrors('');
@@ -71,7 +71,7 @@ const handleSubmit = async (event: { preventDefault: () => void }) => {
   }
   // Calls the register helper function with form values
   const registrationResult = await register({username, email, password });
-  // If it's a string, it holds the error message else it's a number holding the user id (register.ts)
+  // If it's a string, it is the encrypted token, else it's an object that contains the error message (register.ts)
   if (typeof registrationResult === 'object'){
     sethasErrors(registrationResult.error);
   }

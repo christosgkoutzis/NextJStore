@@ -30,7 +30,9 @@ const Verified = () => {
         }
         else {
           try {
+            // Authenticates the user in WP CMS user database
             const authenticated = await wp_fetch(`users/${id}?roles=subscriber`,'PUT', {'roles': 'subscriber'});
+            // Deletes temporary session from /verify API route
             const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
               method: 'DELETE',
               headers: {

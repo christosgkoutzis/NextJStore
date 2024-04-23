@@ -1,4 +1,4 @@
-import { createToken, decrypt } from "../../session";
+import { createToken, encrypt } from "../../session";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { sendEmail } from "./mailer";
 
@@ -6,14 +6,14 @@ import { sendEmail } from "./mailer";
 export async function emailToken(username: string, password: string, id: number, email: string) {
   // Creates user's verification JWT token in WordPress headless CMS
   try {
-    const encryptedToken = await createToken(username, password);
-    console.log('register enc:', encryptedToken)
-    if (typeof encryptedToken !== 'string'){
-      return {error: encryptedToken.error};
+    const token = await createToken(username, password);
+    if ('error' in token){
+      return {error: token.error};
     }
+    const encryptedToken = await encrypt(token);
       // Sends a verification email to the user if there are email and id parameters in the function 
     if (encryptedToken){ 
-      const mailer:SMTPTransport.SentMessageInfo  = await sendEmail(username, email, 'VERIFY', encryptedToken, id);
+      const mailer:SMTPTransport.SentMessageInfo  = await sendEmail(username, email, 'VERIFY', id, encryptedToken);
       if (mailer){
         return encryptedToken;
         }

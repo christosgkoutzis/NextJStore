@@ -29,7 +29,7 @@ const clientErrors = () => {
   }
 }
 
-// Handle form submission
+// Handles form submission
 const handleSubmit = async (event: { preventDefault: () => void }) => {
   event.preventDefault()
   // Checks the form for errors

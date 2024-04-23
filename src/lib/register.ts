@@ -14,7 +14,7 @@ export async function register(credentials: UserLog) {
     }
     const user = await wp_fetch('users', 'POST', credentials);
     if (user.id) {
-      // Creates a JWT token and sends a verification email
+      // Creates a JWT token and sends a verification email to the user
       const token = await emailToken(credentials.username, credentials.password, user.id, credentials.email);
       return token;
     } 

@@ -1,5 +1,6 @@
 // API route that decrypts JWT tokens and redirects to /verified route or returns token as JSON according to params
-import { decrypt } from '@/session';
+import { createSession, decrypt, encrypt } from '@/session';
+import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Export function for GET method
@@ -7,51 +8,37 @@ export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const id = url.searchParams.get("id");
-    let token = url.searchParams.get("token");
-    if (!token) {
+    const token = url.searchParams.get("token");
+    const username = url.searchParams.get("username");
+    if (!id) {
       console.error('Error during verification: Incorrect URL parameters');
       return new NextResponse(JSON.stringify({error: 'Incorrect URL parameters'}), {status: 400});
     }
-    // Decrypts token to send it for verification
-    const decrypted = await decrypt(token);
     // if there is no id param, redirects to /password-reset route to change user password
-    if (!id){
-      if (decrypted.id){
-        const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
-          method: 'POST',
-          body: JSON.stringify(decrypted),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }); 
-        await res.json();
-        return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `${decrypted.username}/password-reset?id=${decrypted.id}`))
+    if (!token){
+      // Creates temporary session to the user to pass middleware authorization (didn't use /cookie API route because of immediate delete bug of the cookie)
+      const temporaryPayload = {token: "forgot-password", id: id, email: "forgot-password", username: username, role: "subscriber"};
+      const encryptedPayload = await encrypt(temporaryPayload);
+      const expires = new Date(Date.now() + 60 * 5 * 1000);
+      const temporarySession = cookies().set("session", encryptedPayload, { expires, httpOnly: true })
+      // createSession() returns either a string for an encrypted session token or an object containing the error
+      if(temporarySession){
+        return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `${username}/password-reset`)) 
       }
       else{
-        return new NextResponse(JSON.stringify({error: 'Error decrypting the token.'}), {status: 500});
-      }
+        console.error('Error creating the cookie');
+        return new NextResponse(JSON.stringify({error: 'Error creating the cookie'}), {status: 500});
+      }  
     }
-    // If there is id param, redirects to /verified route to export email verification result
-    const decryptedToken = decrypted.token;
-    // Creates temporary session to the user to pass middleware authorization
-
-    /*const tokenValidate = await fetch(process.env.NEXT_PUBLIC_JWT_BASE + 'token/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${decryptedToken}`
-      },
-    });  */
-
-   const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
-      method: 'POST',
-      body: JSON.stringify(decrypted),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    if(res.ok){ 
-    return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `${decrypted.username}/verified?id=${id}&token=${decryptedToken}`))
+    // If there is token param, redirects to /verified route to export email verification result
+    const temporaryPayload = await decrypt(token);
+    // Decrypts token to send it for verification
+     const decryptedToken = temporaryPayload.token;
+     // Creates temporary session to the user to pass middleware authorization
+     const temporarySession = await createSession(temporaryPayload);
+    // createSession() returns either a string for an encrypted session token or an object containing the error
+    if(typeof temporarySession === 'string'){ 
+      return NextResponse.redirect(new URL (process.env.NEXT_PUBLIC_DEPLOY_URL + `${temporaryPayload.username}/verified?id=${id}&token=${decryptedToken}`))
     }
     else{
       console.error('Error creating the cookie');

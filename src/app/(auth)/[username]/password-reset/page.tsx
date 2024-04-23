@@ -3,27 +3,25 @@
 import ErrorAlert from '@/components/ErrorAlert'
 import SuccessAlert from '@/components/SuccessAlert'
 import { Icons } from '@/components/icons'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { useState, useEffect } from 'react'
 // useRouter for inner navigation in client components
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { wp_fetch } from '@/lib/wp-fetch'
+import { infoFetch } from '@/session'
 
 
 const Page = () => {
 // Declaring hooks at the top of page function components to avoid conflicts
+const pathname = usePathname()
 const router = useRouter();
 const [password, setPassword] = useState(String);
 const [confirmPassword, setConfirmPassword] = useState(String);
 const [formSubmitted, setFormSubmitted] = useState(Boolean);
 const [hasErrors, sethasErrors] = useState(String);
-
-// Fetches token and user's id URL params
-const searchParams = useSearchParams();
-const id = searchParams.get('id');
 
 // Function that handles the incorrect submits of the form
 const clientErrors = () => {
@@ -31,7 +29,7 @@ const clientErrors = () => {
     sethasErrors('All input fields are required to be filled.') 
     return true;
   }
-  // Check if the password and confirm password match
+  // Checks if the password and confirm password match
   if (password !== confirmPassword) {
     sethasErrors('Password and confirm password values are not equal.')
     return true;
@@ -44,7 +42,22 @@ const clientErrors = () => {
   return false;
 }
 
-// Handle form submission
+// Extracts username from current path
+const getUsername = (currentPath: string): string | null => {
+  // Define a regular expression pattern to match the value between slashes
+  const regex = /\/([^/]+)\/password-reset/;
+  // Use the exec() method to find the matches
+  const match = regex.exec(currentPath);
+  // Check if there is a match and extract the value
+  if (match && match[1]) {
+    return match[1];
+  } else {
+    return null;
+  }
+};
+
+
+// Handles form submission
 const handleSubmit = async (event: { preventDefault: () => void }) => {
   event.preventDefault()
   // Checks the form for errors
@@ -52,19 +65,29 @@ const handleSubmit = async (event: { preventDefault: () => void }) => {
     setFormSubmitted(true);
     return false;
   }
-  // Calls the login helper function with form values
-  const resetPassword = await wp_fetch(`users/${id}`, 'POST', {password});
-  if(resetPassword.id){
-    setFormSubmitted(true);
-    sethasErrors('');
-    const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
+  // Gets username value from current path
+  const username = getUsername(pathname);
+  if(username){
+    // Fetches userInfo to get user's id
+    const userInfo = await infoFetch(username, 'dummy')
+    if (!('error' in userInfo)){
+      const id = userInfo.id
+      // Calls WP CMS RestAPI to change user's password
+      const resetPassword = await wp_fetch(`users/${id}`, 'POST', {password});
+      if(resetPassword.id){
+        setFormSubmitted(true);
+        sethasErrors('');
+        // Deletes temporary session
+        const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const deletedSession = await res.json()
+        return true;    
       }
-    });
-    const deletedSession = await res.json()
-    return true;    
+    }
   }
   else{
     setFormSubmitted(true);
@@ -83,10 +106,11 @@ useEffect(() => {
       clearTimeout(errorTtimer)
     }
   }
+  // Redirects to index route after 4 seconds
   else if (formSubmitted && hasErrors === '') {
     const successTimer = setTimeout(() => { 
       router.push('/'); 
-    }, 5000);
+    }, 4000);
     return () => {
       clearTimeout(successTimer);
      }

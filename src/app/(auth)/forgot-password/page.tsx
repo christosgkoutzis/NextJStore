@@ -10,8 +10,7 @@ import { cn } from '@/lib/utils'
 import { useState, useEffect } from 'react'
 // useRouter for inner navigation in client components
 import { useRouter } from 'next/navigation'
-import { wp_fetch } from '@/lib/wp-fetch'
-import { encrypt, infoFetch } from '@/session'
+import { infoFetch } from '@/session'
 import { sendEmail } from '@/lib/mailer/mailer'
 import { Checkbox } from '@/components/ui/checkbox'
 
@@ -23,13 +22,12 @@ const [termsAccepted, setTermsAccepted] = useState(Boolean);
 const [formSubmitted, setFormSubmitted] = useState(Boolean);
 const [hasErrors, sethasErrors] = useState(String);
 
-// Function that handles the incorrect submits of the form
+// Function that checks if all the fields of the form are submitted
 const clientErrors = () => {
   if (!email){
     sethasErrors('Input field is required to be filled.') 
     return true;
   }
-  // Checks if terms checkbox is checked
   if (!termsAccepted){
     sethasErrors('You must accept our terms and conditions to procceed.')
     return true;
@@ -37,32 +35,23 @@ const clientErrors = () => {
   return false;
 }
 
-// Handle form submission
+// Handles form submission
 const handleSubmit = async (event: { preventDefault: () => void }) => {
   event.preventDefault()
-  // Checks the form for errors
+  // Checks the form for incomplete fields
   if (clientErrors()){
     setFormSubmitted(true);
     return false;
   }
-  // Calls the login helper function with form values
+  // Fetches user's info from WP CMS
   const userInfo = await infoFetch(email, 'forgot-password');
   if('error' in userInfo){
     setFormSubmitted(true);
     sethasErrors(userInfo.error);
     return false;
   }
-  const token = await encrypt(userInfo)
-  const mailer = await sendEmail(userInfo.username, email, 'FORGOT', token)
-  if(token && mailer){
-    const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
-      method: 'POST',
-      body: JSON.stringify(token),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    const session = await res.json()
+  const mailer = await sendEmail(userInfo.username, email, 'FORGOT', userInfo.id)
+  if(mailer){
     setFormSubmitted(true);
     sethasErrors('');
     return true;
@@ -87,7 +76,7 @@ useEffect(() => {
   else if (formSubmitted && hasErrors === '') {
     const successTimer = setTimeout(() => { 
       router.push('/'); 
-    }, 5000);
+    }, 4000);
     return () => {
       clearTimeout(successTimer);
      }
