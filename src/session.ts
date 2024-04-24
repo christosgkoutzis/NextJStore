@@ -99,7 +99,6 @@ export async function createSession(payload: object) {
  return session; 
 } 
 
-
 // Implements the creation of the session cookie (called from login page component)
 export async function login(credentials: {username: string, password: string}) {
   try {

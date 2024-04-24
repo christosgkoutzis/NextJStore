@@ -4,10 +4,14 @@ import { Icons } from "./icons"
 import NavItems from "./NavItems"
 import { buttonVariants } from "./ui/button"
 import Cart from './Cart'
+import { getSession } from "@/lib/getSession"
 
-const Header = () => {
-  // dummy variable to hold the existense of user session (will be deleted when user feature is added)
-  const user = null;
+// Can be marked as asnyc because it's a server component
+const Header = async () => {
+
+  
+  // Gets user's session to apply conditional visuals
+  const user = await getSession();
   return(
     <div className="bg-white sticky z-50 top-0 inset-x-0 h-16">
       <header className="relative bg-white">

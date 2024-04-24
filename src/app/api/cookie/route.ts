@@ -23,11 +23,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-
+// Export function for GET method
 export async function GET(req: NextRequest) {
   try {
-    const url = new URL(req.url);
-    const session = url.searchParams.get("cookie");
+    const session = req.cookies.get("session")?.value
     // Decrypts session token and returns it back to middleware
     if (session){
       const decryptedCookie = await decrypt(session);
@@ -35,11 +34,11 @@ export async function GET(req: NextRequest) {
     }
     else{
       console.error('Note: Session cookie not found');
-      return new NextResponse(JSON.stringify({error: 'Session cookie not found.'}), {status: 401});
+      return new NextResponse(JSON.stringify(null), {status: 401});
     }
   } catch (error) {
     console.error('Error during getting session cookie:', error);
-    return new NextResponse(JSON.stringify({error}), {status: 500});
+    return new NextResponse(JSON.stringify(null), {status: 500});
   }
 } 
 
