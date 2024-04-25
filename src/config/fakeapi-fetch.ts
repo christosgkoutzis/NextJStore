@@ -62,7 +62,7 @@ const fetchCategoriesAndCreateObject = () => {
 
         setCategoriesWithImages(categoriesData);
       } catch (error) {
-        console.error('Error fetching data', error);
+        console.error('Error fetching data:', error);
       }
     };
 

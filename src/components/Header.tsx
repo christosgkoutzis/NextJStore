@@ -5,11 +5,10 @@ import NavItems from "./NavItems"
 import { buttonVariants } from "./ui/button"
 import Cart from './Cart'
 import { getSession } from "@/lib/getSession"
+import LoggedInNav from "./LoggedInNav"
 
 // Can be marked as asnyc because it's a server component
 const Header = async () => {
-
-  
   // Gets user's session to apply conditional visuals
   const user = await getSession();
   return(
@@ -36,7 +35,7 @@ const Header = async () => {
                   {/* Visual seperator */}
                   {user ? null : <span className="h-6 w-px bg-gray-200" aria-hidden='true'/>}
                   {/* Dropdown including user info if there's user session else Link to register page */}
-                  {user ? (<p></p>) : <Link href='/register' className={buttonVariants({variant: 'ghost'})}>Register</Link>}
+                  {user ? (<LoggedInNav user={user}/>) : <Link href='/register' className={buttonVariants({variant: 'ghost'})}>Register</Link>}
                   {/* Visual seperators */}
                   {user ? <span className="h-6 w-px bg-gray-200" aria-hidden='true'/> : null}
                   {user ? null : <div className="flex lg:ml-6 "><span className="h-6 w-px bg-gray-200" aria-hidden='true'/></div>}

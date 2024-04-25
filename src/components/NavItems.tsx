@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from "react"
 import NavItem from "./NavItem"
 import fetchCategoriesAndCreateObject from "@/config/fakeapi-fetch"
-import { useOnClickOutside } from "@/app/hooks/use-on-click-outside"
+import { useOnClickOutside } from "@/hooks/use-on-click-outside"
 
 const NavItems = () => {
     // fetchCategoriesAndCreateObject function must be called at the top of a functional component

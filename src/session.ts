@@ -1,6 +1,14 @@
 import { SignJWT, jwtVerify } from "jose";
 import { wp_fetch } from "./lib/wp-fetch";
 
+export interface UserInfo{
+  token: string
+  id: number
+  email: string
+  username: string
+  role: string
+}
+
 // Secretkey used for encryption (usually an environmental variable)
 const secretKey = process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY;
 const key = new TextEncoder().encode(secretKey);
@@ -29,7 +37,7 @@ export async function decrypt(input: string): Promise<any> {
 
 
 // Fetches required user's informaion from WP CMS and forms the payload of the session cookie (limits results to 1 to avoid multiple usernames)
-export async function infoFetch(username: string, token: string){
+export async function infoFetch(username: string, token: string): Promise<UserInfo | { error: string; }>{
   try {
       const infoFetch = await wp_fetch(`users?search=${username}&context=edit&per_page=1`,'GET');
       const userInfo = {token: token, id: infoFetch[0].id, email: infoFetch[0].email, username: infoFetch[0].username, role: infoFetch[0].roles[0]};
@@ -87,16 +95,21 @@ export async function createToken(username: string, password: string) {
 
 // Creates session cookie
 export async function createSession(payload: object) {
-  // Creates the session cookie by a POST request to the /cookie API endpoint
-  const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
-   method: 'POST',
-   body: JSON.stringify(payload),
-   headers: {
-     'Content-Type': 'application/json'
-   }
- });
- const session = await res.json()
- return session; 
+  try {
+    // Creates the session cookie by a POST request to the /cookie API endpoint
+    const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const session = await res.json()
+    return session; 
+    } catch (error) {
+      console.error('Error logging in:', error);
+      return {error};
+  }  
 } 
 
 // Implements the creation of the session cookie (called from login page component)
@@ -116,3 +129,22 @@ export async function login(credentials: {username: string, password: string}) {
       return {error: 'Internal Server Error'};
   }
 }
+
+// Gets session server side to apply conditional visuals to header
+export async function deleteSession() {
+  try {
+    // Creates the session cookie by a POST request to the /cookie API endpoint
+    const res = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const session = await res.json()
+    return session; 
+  } catch (error) {
+    console.error('Error logging out:', error);
+    return {error};
+  }
+  
+} 

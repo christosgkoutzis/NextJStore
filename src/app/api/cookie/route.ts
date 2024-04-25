@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const encrypted = await encrypt(body);
     const token = JSON.stringify(encrypted);
     const expires = new Date(Date.now() + 60 * 5 * 1000);
-    const cookie = await cookies().set("session", encrypted, { expires, httpOnly: true });
+    const cookie = cookies().set("session", encrypted, { expires, httpOnly: true });
     if (cookie){
       return new NextResponse(token, {status: 200});     
     }
@@ -45,8 +45,8 @@ export async function GET(req: NextRequest) {
 // Export function for DELETE method
 export async function DELETE(req: NextRequest) {
   try {
-    await cookies().set("session", "", { expires: new Date(0) });
-    return new NextResponse(JSON.stringify({success: 'Session deleted.'}), {status: 200});     
+    cookies().set("session", "", { expires: new Date(0) });
+    return NextResponse.redirect(new URL('/', req.nextUrl));
   } catch (error) {
     console.error('Error during setting session cookie:', error);
     return new NextResponse(JSON.stringify({error}), {status: 500});;
