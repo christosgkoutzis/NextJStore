@@ -2,15 +2,16 @@
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Button } from "./ui/button"
-import { UserInfo, deleteSession } from "../session"
+import { UserInfo } from "../session"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
 
 // The component accepts as props the user object from Header parent component
 const LoggedInNav = ({user}: {user: UserInfo}) => {
-
+  
+  // Custom hook that logs out the user
   const {logout} = useAuth()
-
+  
   return (
   <DropdownMenu>
     <DropdownMenuTrigger asChild className="overflow-visible">

@@ -78,8 +78,9 @@ useEffect(() => {
   }
   else if (formSubmitted && hasErrors === '') {
     const successTimer = setTimeout(() => { 
-      router.refresh();
-      router.push('/'); 
+      router.push('/');
+      // Refreshes the page after redirecting to update navbar's conditional session styles
+      router.refresh(); 
     }, 4000);
     return () => {
       clearTimeout(successTimer);

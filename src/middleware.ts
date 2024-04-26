@@ -56,6 +56,7 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL(`/${session.username}${isSessionProtectedRoute}`, req.nextUrl));
     }
     const updatedSession = await updateSession(session)
+    
     return updatedSession
   }
   else {
