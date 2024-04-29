@@ -7,7 +7,7 @@ import fetchCategoriesAndCreateObject from "@/config/fakeapi-fetch"
 import { useOnClickOutside } from "@/hooks/use-on-click-outside"
 
 const NavItems = () => {
-    // fetchCategoriesAndCreateObject function must be called at the top of a functional component
+  // fetchCategoriesAndCreateObject function must be called at the top of a functional component
   const PRODUCT_CATEGORIES = fetchCategoriesAndCreateObject();
   // Typescript generic declaration of state (type null or number with the default value of null) 
   const [activeIndex, setActiveIndex] = useState<null | number>(null)

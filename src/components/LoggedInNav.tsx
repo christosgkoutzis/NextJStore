@@ -25,7 +25,7 @@ const LoggedInNav = ({user}: {user: UserInfo}) => {
       </div>
       <DropdownMenuSeparator />
       <DropdownMenuItem asChild className="cursor-pointer">
-        <Link href='/my-products'>My products</Link>
+        <Link href={`${user.username}/my-products`}>My products</Link>
       </DropdownMenuItem>
       <DropdownMenuItem onClick={logout} className="cursor-pointer">
         Log out

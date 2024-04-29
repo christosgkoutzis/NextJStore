@@ -44,10 +44,10 @@ const ProductCards = () => {
   <div className="flex gap-4 p-7 flex-wrap justify-center">
     {/* product is a declaration of each object of the DEFULT_PRODUCT response */}
     {(DEFAULT_PRODUCTS).map((product) => {
-      return (<ProductCard key={product.id} title={product.title} price={product.price} category={product.category} image={product.image} seller='FakeAPIStore'/>)
+      return (<ProductCard key={product.id} id={product.id} title={product.title} price={product.price} category={product.category} image={product.image} description={product.description} seller='FakeAPIStore'/>)
     })}
     {(userProducts).map((product) => {
-      return (<ProductCard key={product.id} title={product.acf.name} price={product.acf.price_in_usd} category={product.acf.category} image={product.acf.image} seller= {product.acf.user}/>)
+      return (<ProductCard key={product.id} id={product.id} title={product.acf.name} price={product.acf.price_in_usd} category={product.acf.category} image={product.acf.image} description={product.acf.description} seller= {product.acf.user}/>)
     })}
   </div>
   )

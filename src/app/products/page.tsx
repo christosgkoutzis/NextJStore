@@ -2,7 +2,6 @@
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import ProductCards from "@/components/ProductCards"
-import { Button } from "@/components/ui/button";
 
 const Page = () => {
   
