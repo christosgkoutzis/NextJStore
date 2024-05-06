@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -20,20 +19,19 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { ProductCardProps } from "@/components/ProductCard";
 import { Plus, ShoppingBag, User } from "lucide-react";
-import Image from 'next/image';
 
 
 interface DetailsSchemaProps {
   title: string;
   price: number;
-  image: string;
-  seller: string | null;
   category: string;
+  image: string;
+  description: string;
+  seller: string | null;
 }
 
-const ProductDetails: React.FC<ProductCardProps> = ({ id, title, price, category, image, description, seller }) => {
+const ProductDetails: React.FC<DetailsSchemaProps> = ({ title, price, category, image, description, seller }) => {
 
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -122,13 +120,3 @@ const ProductDetails: React.FC<ProductCardProps> = ({ id, title, price, category
 };
 
 export default ProductDetails;
-
-const DetailsSchema: React.FC<DetailsSchemaProps> = ({ title, price, image, seller, category }) => {
-  return (
-    <div className="max-w-screen-lg mx-auto px-5 flex-grow">
-      <div className="bg-white rounded-md p-7 relative aspect-video overflow-hidden group-hover:opacity-75">
-        <Image src={image} alt={title} fill className="object-center object-cover"/>
-      </div>
-    </div>
-  );
-};
