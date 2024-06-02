@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import { decrypt, encrypt } from './session'
 
 // Specify protected and public routes
-const sessionProtectedRoutes = ['/password-reset']
+const sessionProtectedRoutes = ['/password-reset', '/sell']
 const noSessionProtectedRoutes = ['/login', '/register', '/forgot-password']
 const nonVerifiedSessionProtectedRoutes = ['/verified']
 
@@ -43,12 +43,13 @@ export default async function middleware(req: NextRequest) {
   if (cookie){
     // Gets rid of the double quotes of the cookie.value and decrypts the session payload
     const session = await decrypt(cookie);
+    let isVerifiedUser = (session?.role === 'subscriber') || (session?.role === 'author')
     // Redirect to /login if the user is not authenticated/verified and tries to access a session protected route
-    if (isSessionProtectedRoute && session?.role !== 'subscriber') {
+    if (isSessionProtectedRoute && !(isVerifiedUser)) {
       return NextResponse.redirect(new URL('/login', req.nextUrl));
     }
     // Redirect to index route if the user is authenticated and tries to access a no-session - non-verified protected route
-    if ((isNoSessionProtectedRoute && session.username) || (isnonVerifiedSessionProtectedRoute && session.role === 'subscriber')) {
+    if ((isNoSessionProtectedRoute && session.username) || (isnonVerifiedSessionProtectedRoute && isVerifiedUser)) {
       return NextResponse.redirect(new URL('/', req.nextUrl));
     }
     // Redirect to your account's endpath if you try to access another account's endpath

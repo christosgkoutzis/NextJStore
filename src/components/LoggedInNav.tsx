@@ -20,12 +20,15 @@ const LoggedInNav = ({user}: {user: UserInfo}) => {
     <DropdownMenuContent className="bg-white w-80" align="end">
       <div className="flex items-center justify-start gap-2 p-2">
         <div className="flex flex-col space-y-0.5 leading-none">
-          <p className="font-medium text-sm text-black">{user.email}</p>
+          <p className="font-medium text-sm text-black">Hello, {user.username}</p>
         </div>
       </div>
       <DropdownMenuSeparator />
       <DropdownMenuItem asChild className="cursor-pointer">
         <Link href={`${user.username}/my-products`}>My products</Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem asChild className="cursor-pointer">
+        <Link href={`${user.username}/sell`}>Sell a Product</Link>
       </DropdownMenuItem>
       <DropdownMenuItem onClick={logout} className="cursor-pointer">
         Log out
