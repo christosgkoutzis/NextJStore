@@ -1,4 +1,4 @@
-const productSubmit = async (name: string, description: string, price: number, category: string, files: number|null, image: number) => {
+const productSubmit = async (name: string, description: string, price: number, category: string, image: number) => {
   try {
     const cookie = await fetch(process.env.NEXT_PUBLIC_DEPLOY_URL + 'api/cookie', {
       method: 'GET',
@@ -20,7 +20,6 @@ const productSubmit = async (name: string, description: string, price: number, c
                   price_in_usd: price,
                   category,
                   image,
-                  files   
               }
             }
         const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + 'products', {

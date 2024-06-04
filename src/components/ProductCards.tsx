@@ -14,9 +14,8 @@ interface UserProduct {
       description: string,
       price_in_usd: number,
       category: string,
-      files: string | null,
       image: string,
-      status: string[],
+      status: string,
       "": ""
   }
 }
@@ -30,7 +29,15 @@ const ProductCards = () => {
     const userProductFetch = async () => {
       // Gets products from users (fetches only product id and ACF info)
       try {
-        const USER_PRODUCTS: UserProduct[] = await wp_fetch("products?_fields=id,acf", "GET");
+        let USER_PRODUCTS: UserProduct[] = await wp_fetch("products?_fields=id,acf", "GET");
+        USER_PRODUCTS.map(async (product) => {
+          // Replaces user's id with username accessing user database
+          const userfetch = await wp_fetch(`users/${product.acf.user}`, "GET");
+          product.acf.user = await userfetch.name;
+          // Replaces image's id with image's link from CMS
+          const imagefetch = await wp_fetch(`media/${product.acf.image}`, "GET");
+          product.acf.image = await imagefetch.link;
+        })
         setUserProducts(USER_PRODUCTS);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -47,7 +54,10 @@ const ProductCards = () => {
       return (<ProductCard key={product.id} id={product.id} title={product.title} price={product.price} category={product.category} image={product.image} description={product.description} seller='FakeAPIStore'/>)
     })}
     {(userProducts).map((product) => {
-      return (<ProductCard key={product.id} id={product.id} title={product.acf.name} price={product.acf.price_in_usd} category={product.acf.category} image={product.acf.image} description={product.acf.description} seller= {product.acf.user}/>)
+      if(product.acf.status === 'accepted')
+        {
+          return (<ProductCard key={product.id} id={product.id} title={product.acf.name} price={product.acf.price_in_usd} category={product.acf.category} image={product.acf.image} description={product.acf.description} seller= {product.acf.user}/>)
+        }
     })}
   </div>
   )

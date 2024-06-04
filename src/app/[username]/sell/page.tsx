@@ -20,16 +20,9 @@ const Page = () => {
   const [description, setDescription] = useState(String);
   const [price, setPrice] = useState(Number);
   const [category, setCategory] = useState(String);
-  const [file, setFile] = useState<File|null>(null);
   const [image, setImage] = useState<File>();
   const [termsAccepted, setTermsAccepted] = useState(Boolean);
   const [hasErrors, sethasErrors] = useState('');
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
-  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -66,10 +59,7 @@ const Page = () => {
     setFormSubmitted(true);
     try {
       // ImageLink is mandatory whereas fileLink is not (controlled below from the form fields)
-      let fileID, imageID = null;
-      if (file){
-        fileID = await fileUpload(file);
-      }
+      let imageID = null;
       if (image){
         imageID = await fileUpload(image);
       }
@@ -79,7 +69,7 @@ const Page = () => {
         return;
       }
       // Submits the product (custom ACF) to CMS
-      const submitResult = await productSubmit(name, description, price, category, fileID, imageID);
+      const submitResult = await productSubmit(name, description, price, category, imageID);
       if ("error" in submitResult){
         sethasErrors(submitResult.error)
       }
@@ -148,20 +138,14 @@ const Page = () => {
                       <SelectGroup>
                         <SelectItem value="electronics">Electronics</SelectItem>
                         <SelectItem value="jewlery">Jewlery</SelectItem>
-                        <SelectItem value="men_clothing">Men's Clothing</SelectItem>
-                        <SelectItem value="women_clothing">Women's Clothing</SelectItem>
+                        <SelectItem value="men's clothing">Men's Clothing</SelectItem>
+                        <SelectItem value="women's clothing">Women's Clothing</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="grid gap-1 py-2">
-                  <Label htmlFor='description'>Product's File (Optional)</Label>
-                  {/* TODO determine how to upload files to CMS */}
-                  <Input id='file' name='file' type='file' onChange={handleFileChange} />
-                </div>
-                <div className="grid gap-1 py-2">
                   <Label htmlFor='description'>Product's Image</Label>
-                  {/* TODO determine how to upload files to CMS */}
                   <Input id='image' name='image' type='file' onChange={handleImageChange} required/>
                 </div>
                 <div className="items-top flex space-x-2">
