@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import { decrypt, encrypt } from './session'
 
 // Specify protected and public routes
-const sessionProtectedRoutes = ['/password-reset', '/sell']
+const sessionProtectedRoutes = ['/password-reset', '/sell', 'my-products']
 const noSessionProtectedRoutes = ['/login', '/register', '/forgot-password']
 const nonVerifiedSessionProtectedRoutes = ['/verified']
 
