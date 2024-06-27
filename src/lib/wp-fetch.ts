@@ -7,7 +7,7 @@ export async function wp_fetch(endpoint: string, method: string, body?: object){
   const encryptedWpAppCredentials = btoa(`${wpAppCredentials.username}:${wpAppCredentials.password}`);
   try {
     let res: Response
-    if (method === 'GET'){
+    if (method === 'GET' || method === 'DELETE'){
       res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + endpoint, {
         method,
         headers: {

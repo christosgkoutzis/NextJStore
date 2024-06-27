@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { fetchDefaultProducts } from "@/config/fakeapi-fetch";
 import { wp_fetch } from "@/lib/wp-fetch";
@@ -47,7 +47,7 @@ const ProductCards = ({ variant }: { variant: string }) => {
           // TS guard that ensures that all undefined values are filtered out from the USER_PRODUCT array
           // This line informs TS that product is of type UserProduct if it's not undefined
           USER_PRODUCTS = filteredProducts.filter((product): product is UserProduct => product !== undefined);
-          // The component is called from /products route
+        // The component is called from /products route
         } else {
           USER_PRODUCTS = await Promise.all(USER_PRODUCTS.map(async (product) => {
             const userfetch = await wp_fetch(`users/${product.acf.user}`, "GET");
@@ -70,6 +70,7 @@ const ProductCards = ({ variant }: { variant: string }) => {
     <div className="flex gap-4 p-7 flex-wrap justify-center">
       {variant === 'products' ? DEFAULT_PRODUCTS.map((product) => (
         <ProductCard
+          variant={variant}
           key={product.id}
           id={product.id}
           title={product.title}
@@ -81,18 +82,35 @@ const ProductCards = ({ variant }: { variant: string }) => {
         />
       )) : null}
       {userProducts.map((product) => (
-        product.acf.status === 'accepted' && (
-          <ProductCard
-            key={product.id}
-            id={product.id}
-            title={product.acf.name}
-            price={product.acf.price_in_usd}
-            category={product.acf.category}
-            image={product.acf.image}
-            description={product.acf.description}
-            seller={product.acf.user}
-          />
-        )
+        variant === 'products' ?
+          (product.acf.status === 'accepted' && (
+            <ProductCard
+              variant={variant}
+              key={product.id}
+              id={product.id}
+              title={product.acf.name}
+              price={product.acf.price_in_usd}
+              category={product.acf.category}
+              image={product.acf.image}
+              description={product.acf.description}
+              seller={product.acf.user}
+            />
+          ))
+          :
+          (
+            <ProductCard
+              variant={variant}
+              key={product.id}
+              id={product.id}
+              title={product.acf.name}
+              price={product.acf.price_in_usd}
+              category={product.acf.category}
+              image={product.acf.image}
+              description={product.acf.description}
+              seller={product.acf.user}
+              status={product.acf.status}
+            />
+          )
       ))}
     </div>
   )
