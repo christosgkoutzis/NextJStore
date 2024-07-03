@@ -11,8 +11,10 @@ const productSubmit = async (name: string, description: string, price: number, c
       // If the user has a role of seller according to custom user roles of CMS
       if (session.role === 'author'){
         const token = session.token;
+        // Published status to avoid drafting on CMS database
         const body =
             {
+              status: "publish",
               acf: {
                   user: session.id,
                   name,

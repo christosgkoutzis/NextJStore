@@ -67,24 +67,22 @@ const Verified = () => {
     })
   // Returns verification result in XML 
   return (
-    <>
-      <MaxWidthWrapper>
-        <div className="py-20 mx-auto text-center flex flex-col items-center max-w-3xl">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-700 sm:text-5xl">
-            {verified}
-          </h1>
-          <p className="mt-6 text-lg max-w-prose text-muted-foreground">
-            {buttonText}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 mt-6">
-            {/* buttonVariants() applies default styles of the button component. With parameters, the styles change */}
-            <Link href={buttonRedirect} className={buttonVariants()}>
-              Return
-            </Link>
-          </div>
+    <MaxWidthWrapper>
+      <div className="py-20 mx-auto text-center flex flex-col items-center max-w-3xl">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-700 sm:text-5xl">
+          {verified}
+        </h1>
+        <p className="mt-6 text-lg max-w-prose text-muted-foreground">
+          {buttonText}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 mt-6">
+          {/* buttonVariants() applies default styles of the button component. With parameters, the styles change */}
+          <Link href={buttonRedirect} className={buttonVariants()}>
+            Return
+          </Link>
         </div>
-      </MaxWidthWrapper>
-    </>
+      </div>
+    </MaxWidthWrapper>
   );
 } 
 

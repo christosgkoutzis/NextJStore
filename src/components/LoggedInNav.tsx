@@ -24,12 +24,17 @@ const LoggedInNav = ({user}: {user: UserInfo}) => {
         </div>
       </div>
       <DropdownMenuSeparator />
-      <DropdownMenuItem asChild className="cursor-pointer">
-        <Link href={`${user.username}/my-products`}>My products</Link>
-      </DropdownMenuItem>
-      <DropdownMenuItem asChild className="cursor-pointer">
-        <Link href={`${user.username}/sell`}>Sell a Product</Link>
-      </DropdownMenuItem>
+      {// My products and sell a product options appear only on seller accounts
+        (user.role === 'author') ? (
+        <>
+          <DropdownMenuItem asChild className="cursor-pointer">
+            <Link href={`${user.username}/my-products`}>My products</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild className="cursor-pointer">
+            <Link href={`${user.username}/sell`}>Sell a Product</Link>
+          </DropdownMenuItem>
+        </>
+      ): null}
       <DropdownMenuItem onClick={logout} className="cursor-pointer">
         Log out
       </DropdownMenuItem>
