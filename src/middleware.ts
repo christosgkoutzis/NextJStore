@@ -3,7 +3,9 @@ import { cookies } from 'next/headers'
 import { decrypt, encrypt } from './session'
 
 // Specify protected and public routes
-const sessionProtectedRoutes = ['/password-reset', '/sell', '/my-products']
+const sellerProtectedRoutes = ['/sell', '/my-products']
+// The spread operator includes sellerProtectedRoutes array values to sessionProtectedRoutes
+const sessionProtectedRoutes = ['/password-reset', ...sellerProtectedRoutes]
 const noSessionProtectedRoutes = ['/login', '/register', '/forgot-password']
 const nonVerifiedSessionProtectedRoutes = ['/verified']
 
@@ -35,21 +37,26 @@ export default async function middleware(req: NextRequest) {
   // Check if the current route is protected or public
   const path = req.nextUrl.pathname
   let isSessionProtectedRoute = endsWithAny(path, sessionProtectedRoutes);
-  let isnonVerifiedSessionProtectedRoute = endsWithAny(path, noSessionProtectedRoutes);
-  let isNoSessionProtectedRoute = endsWithAny(path, nonVerifiedSessionProtectedRoutes);
+  let isnonVerifiedSessionProtectedRoute = endsWithAny(path, nonVerifiedSessionProtectedRoutes);
+  let isNoSessionProtectedRoute = endsWithAny(path, noSessionProtectedRoutes);
+  let isSellerProtectedRoute = endsWithAny(path, sellerProtectedRoutes);
+
  
   // Decrypt the session from the cookie
   const cookie = cookies().get('session')?.value
   if (cookie){
     // Gets rid of the double quotes of the cookie.value and decrypts the session payload
     const session = await decrypt(cookie);
-    let isVerifiedUser = (session?.role === 'subscriber') || (session?.role === 'author')
-    // Redirect to /login if the user is not authenticated/verified and tries to access a session protected route
-    if (isSessionProtectedRoute && !(isVerifiedUser)) {
+    let isNonVerifiedUser = (session?.role === 'unauthorized_user');
+    let isSeller = (session?.role === 'author');
+    let isVerifiedUser = (session?.role === 'subscriber') || (isSeller);
+    let isUser = (isVerifiedUser) || (isNonVerifiedUser);
+    // Redirect to /login if the user is not registered and tries to access a session protected route
+    if (isSessionProtectedRoute && !(isUser)) {
       return NextResponse.redirect(new URL('/login', req.nextUrl));
     }
-    // Redirect to index route if the user is authenticated and tries to access a no-session - non-verified protected route
-    if ((isNoSessionProtectedRoute && session.username) || (isnonVerifiedSessionProtectedRoute && isVerifiedUser)) {
+    // Redirect to index route if the user is authenticated and tries to access a no-session / non-verified protected route or a non seller tries to access seller routes
+    if ((isNoSessionProtectedRoute && isUser) || (isnonVerifiedSessionProtectedRoute && isVerifiedUser) || (isSellerProtectedRoute && !isSeller)) {
       return NextResponse.redirect(new URL('/', req.nextUrl));
     }
     // Redirect to your account's endpath if you try to access another account's endpath
