@@ -8,6 +8,7 @@ const sellerProtectedRoutes = ['/sell', '/my-products']
 const sessionProtectedRoutes = ['/password-reset', ...sellerProtectedRoutes]
 const noSessionProtectedRoutes = ['/login', '/register', '/forgot-password']
 const nonVerifiedSessionProtectedRoutes = ['/verified']
+const sellerCandidateProtectedRoutes = ['/become-a-seller']
 
 // Function that checks if route ends with any sessionProtectedRoute
 function endsWithAny(str: string, endings: string[]): string | null {
@@ -40,6 +41,8 @@ export default async function middleware(req: NextRequest) {
   let isnonVerifiedSessionProtectedRoute = endsWithAny(path, nonVerifiedSessionProtectedRoutes);
   let isNoSessionProtectedRoute = endsWithAny(path, noSessionProtectedRoutes);
   let isSellerProtectedRoute = endsWithAny(path, sellerProtectedRoutes);
+  let isSellerCandidateProtectedRoute = endsWithAny(path, sellerCandidateProtectedRoutes);
+
 
  
   // Decrypt the session from the cookie
@@ -49,14 +52,15 @@ export default async function middleware(req: NextRequest) {
     const session = await decrypt(cookie);
     let isNonVerifiedUser = (session?.role === 'unauthorized_user');
     let isSeller = (session?.role === 'author');
+    let isSellerCandidate = (session?.role === 'subscriber');
     let isVerifiedUser = (session?.role === 'subscriber') || (isSeller);
     let isUser = (isVerifiedUser) || (isNonVerifiedUser);
     // Redirect to /login if the user is not registered and tries to access a session protected route
     if (isSessionProtectedRoute && !(isUser)) {
       return NextResponse.redirect(new URL('/login', req.nextUrl));
     }
-    // Redirect to index route if the user is authenticated and tries to access a no-session / non-verified protected route or a non seller tries to access seller routes
-    if ((isNoSessionProtectedRoute && isUser) || (isnonVerifiedSessionProtectedRoute && isVerifiedUser) || (isSellerProtectedRoute && !isSeller)) {
+    // Redirect to index route if the user is authenticated and tries to access a no-session / non-verified protected route or a non seller(/candidate) tries to access seller(/candidate) routes
+    if ((isNoSessionProtectedRoute && isUser) || (isnonVerifiedSessionProtectedRoute && isVerifiedUser) || (isSellerProtectedRoute && !isSeller) || (isSellerCandidateProtectedRoute && !isSellerCandidate)) {
       return NextResponse.redirect(new URL('/', req.nextUrl));
     }
     // Redirect to your account's endpath if you try to access another account's endpath

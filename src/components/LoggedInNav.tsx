@@ -34,7 +34,14 @@ const LoggedInNav = ({user}: {user: UserInfo}) => {
             <Link href={`${user.username}/sell`}>Sell a Product</Link>
           </DropdownMenuItem>
         </>
-      ): null}
+      )
+      // Become a seller option appears only to verified non-seller users
+      : (user.role === 'subscriber') ? (
+      <DropdownMenuItem asChild className="cursor-pointer">
+        <Link href={`${user.username}/become-a-seller`}>Become a Seller</Link>
+      </DropdownMenuItem>
+      ) : null
+      }
       <DropdownMenuItem onClick={logout} className="cursor-pointer">
         Log out
       </DropdownMenuItem>

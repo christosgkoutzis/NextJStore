@@ -77,8 +77,14 @@ useEffect(() => {
     }
   }
   else if (formSubmitted && hasErrors === '') {
-    const successTimer = setTimeout(() => { 
-      router.push('/');
+    const successTimer = setTimeout(() => {
+      // Redirects to seller application route if the user has seller param enabled
+      if (seller){
+        router.push(`/${username}/become-a-seller`)
+      }
+      else{
+        router.push('/');
+      } 
       // Refreshes the page after redirecting to update navbar's conditional session styles
       router.refresh(); 
     }, 4000);
@@ -96,7 +102,7 @@ useEffect(() => {
         <div className="flex flex-col items-center space-y-2 text-center">
           <Icons.site_logo className='h-20 w-20'/>
           <h3 className="text-2xl font-bold">
-            {seller? 'Welcome back NextJSeller' : 'Welcome to NextJStore'}
+            {seller? 'Become a NextJSeller' : 'Welcome to NextJStore'}
           </h3>
         </div>
         <div className="grid gap-6">
@@ -121,11 +127,11 @@ useEffect(() => {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                or
+                {seller? 'back to customer?' : 'not a seller?'}
               </span>
             </div>
           </div>
-          {seller? (<Button onClick={customerLogin} variant='secondary'>Login as customer</Button>):(<Button onClick={sellerLogin} variant='secondary'>Login as seller</Button>)}
+          {seller? (<Button onClick={customerLogin} variant='secondary'>Login as customer</Button>):(<Button onClick={sellerLogin} variant='secondary'>Apply for seller</Button>)}
           <Link className={buttonVariants({
             variant: 'link',
             className: 'gap-1.5'})} 
