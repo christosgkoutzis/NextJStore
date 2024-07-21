@@ -9,7 +9,6 @@ const Page = () => {
   const pathname = usePathname();
   // Extract the username part of the path by spliting the pathname string to an array of strings using the "/" character as a dividing point
   const username = pathname.split('/')[1];
-  console.log('username:', username) 
   return (
     <MaxWidthWrapper>
       <div className="flex flex-col md:flex-row">

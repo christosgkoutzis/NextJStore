@@ -6,7 +6,6 @@ import ProductCard from "./ProductCard";
 import { useEffect, useState } from "react";
 import { buttonVariants } from "./ui/button";
 import Link from "next/link";
-import productSubmit from "@/lib/product-submit";
 
 // Declares expected API response for a single product
 interface UserProduct {
