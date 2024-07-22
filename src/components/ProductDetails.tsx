@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Plus, ShoppingBag, User } from "lucide-react";
+import AddToCart from "./AddToCart";
 
 
 interface DetailsSchemaProps {
@@ -66,10 +67,7 @@ const ProductDetails: React.FC<DetailsSchemaProps> = ({ title, price, category, 
                 <span className="text-xl">{currencyFormat(price)}</span>
               </div>
               <div className="self-end">
-                <Button variant='default' className="flex items-center justify-center">
-                  <Plus className="w-4 h-4 mr-1" />
-                  <p>Add to cart</p>
-                </Button>
+                <AddToCart />
               </div>
             </div>
           </div>

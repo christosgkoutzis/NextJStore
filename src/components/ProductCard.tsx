@@ -8,6 +8,7 @@ import ProductDetails from "./ProductDetails";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { wp_fetch } from "@/lib/wp-fetch";
 import { useState } from "react";
+import AddToCart from "./AddToCart";
 
 export interface ProductCardProps {
   variant: string;
@@ -76,10 +77,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ variant, id, title, price, ca
       <div className="text-slate-600 flex justify-between w-full mx-0 items-center">
         <div className="flex items-center flex-grow w-full lg:w-1/2 order-2">
           {variant === 'products' ? (
-            <Button variant='default' className="flex items-center justify-center">
-              <Plus className="w-4 h-4 mr-1" />
-              <p>Add to cart</p>
-            </Button>
+            <AddToCart />
           ) : (
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
