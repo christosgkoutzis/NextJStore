@@ -23,7 +23,8 @@ import { Plus, ShoppingBag, User } from "lucide-react";
 import AddToCart from "./AddToCart";
 
 
-interface DetailsSchemaProps {
+export interface DetailsSchemaProps {
+  id: number;
   title: string;
   price: number;
   category: string;
@@ -32,7 +33,7 @@ interface DetailsSchemaProps {
   seller: string | null;
 }
 
-const ProductDetails: React.FC<DetailsSchemaProps> = ({ title, price, category, image, description, seller }) => {
+const ProductDetails: React.FC<DetailsSchemaProps> = ({ id, title, price, category, image, description, seller }) => {
 
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -67,7 +68,7 @@ const ProductDetails: React.FC<DetailsSchemaProps> = ({ title, price, category, 
                 <span className="text-xl">{currencyFormat(price)}</span>
               </div>
               <div className="self-end">
-                <AddToCart />
+                <AddToCart product={{ id, title, price, category, image, description, seller }}/>
               </div>
             </div>
           </div>

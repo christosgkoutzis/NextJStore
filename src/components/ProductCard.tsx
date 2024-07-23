@@ -3,7 +3,6 @@
 import { currencyFormat } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { MailWarning, Plus, ShoppingBag, User } from "lucide-react";
-import Link from "next/link";
 import ProductDetails from "./ProductDetails";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { wp_fetch } from "@/lib/wp-fetch";
@@ -77,7 +76,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ variant, id, title, price, ca
       <div className="text-slate-600 flex justify-between w-full mx-0 items-center">
         <div className="flex items-center flex-grow w-full lg:w-1/2 order-2">
           {variant === 'products' ? (
-            <AddToCart />
+            <AddToCart product={{ id, title, price, category, image, description, seller }}/>
           ) : (
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
@@ -101,7 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ variant, id, title, price, ca
           )}
         </div>
         <div className="flex items-center justify-center flex-grow w-full lg:w-1/2 order-1">
-          <ProductDetails {...{ title, price, category, image, description, seller }} />
+          <ProductDetails {...{id, title, price, category, image, description, seller }} />
         </div>
       </div>
     </div>

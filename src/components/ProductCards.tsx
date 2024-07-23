@@ -8,7 +8,7 @@ import { buttonVariants } from "./ui/button";
 import Link from "next/link";
 
 // Declares expected API response for a single product
-interface UserProduct {
+export interface UserProduct {
   id: number,
   acf: {
     user: string | null,

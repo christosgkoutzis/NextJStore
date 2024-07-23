@@ -33,7 +33,6 @@ export async function GET(req: NextRequest) {
       return new NextResponse(JSON.stringify(decryptedCookie), {status: 200});
     }
     else{
-      console.error('Note: Session cookie not found');
       return new NextResponse(JSON.stringify(null), {status: 401});
     }
   } catch (error) {
