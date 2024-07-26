@@ -6,6 +6,7 @@ import { buttonVariants } from "./ui/button"
 import Cart from './Cart'
 import { getSession } from "@/lib/getSession"
 import LoggedInNav from "./LoggedInNav"
+import MobileHeader from "./MobileHeader"
 
 // Can be marked as asnyc because it's a server component
 const Header = async () => {
@@ -18,7 +19,7 @@ const Header = async () => {
           <div className="border-b border-gray-200">
             <div className="flex h-16 items-center">
               {/* Mobile header */}
-
+              <MobileHeader user={user}/>
               {/* Desktop header */}
               <div className="ml-4 flex lg:ml-0">
                 <Link href='/'>
@@ -39,9 +40,9 @@ const Header = async () => {
                   {/* Visual seperators */}
                   {user ? <span className="h-6 w-px bg-gray-200" aria-hidden='true'/> : null}
                   {user ? null : <div className="flex lg:ml-6 "><span className="h-6 w-px bg-gray-200" aria-hidden='true'/></div>}
-                  <div className="ml-4 flow-root lg:ml-6">
-                    <Cart />
-                  </div>
+                </div>
+                <div className="ml-4 flow-root lg:ml-6">
+                  <Cart />
                 </div>
               </div>
             </div>
