@@ -42,6 +42,11 @@ const clientErrors = () => {
     sethasErrors('Username must contain alphanumeric characters only.')
     return true;
   }
+  // Forbids username values that would cause bugs
+  if (username === 'products'){
+    sethasErrors('This username value is forbidden. Please choose another username.')
+    return true;
+  }
   // Checks for username and password length
   if (password.length < 8 || username.length > 10){
     sethasErrors('Password must be 8 characters or longer and username must be no longer than 10 characters.')

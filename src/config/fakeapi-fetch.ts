@@ -16,7 +16,7 @@ interface Product {
 }
 
 // Declares expected structure of PRODUCT_CATEGORIES array (in components)
-interface CategoryWithImages {
+export interface CategoryWithImages {
   label: string;
   slug: string;
   info: {
@@ -47,17 +47,17 @@ const fetchCategoriesAndCreateObject = () => {
             info: [
               {
                 name: 'Trending',
-                href: '#',
+                href: `/products/${category.toLowerCase()}`,
                 image: products[0].image,
               },
               {
                 name: 'New Arrivals',
-                href: '#',
+                href: `/products/${category.toLowerCase()}`,
                 image: products[1].image,
               },
               {
                 name: 'Top Sellers',
-                href: '#',
+                href: `/products/${category.toLowerCase()}`,
                 image: products[2].image,
               },
             ],

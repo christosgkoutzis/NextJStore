@@ -65,7 +65,7 @@ return (
           <SheetFooter>
             {/* asChild attribute means that everything inside the element will NOT be wrapped in a button element (default behavior) */}
             <SheetTrigger asChild>
-              <Link href='/cart' className={buttonVariants({className: 'w-full'})}>Continue to Checkout</Link>
+              <Link href='/thank-you' className={buttonVariants({className: 'w-full'})}>Continue to Checkout</Link>
             </SheetTrigger>
           </SheetFooter>
         </div>

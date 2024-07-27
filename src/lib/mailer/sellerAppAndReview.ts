@@ -3,7 +3,7 @@
 import nodemailer from 'nodemailer';
 
 // Sends emails through nodemailer library
-export const sellerApplication = async(name: string, username: string, description: string ) => {
+export const sellerAppAndReview = async(name: string, username: string, description: string, variant: string ) => {
   try {   
     // Transporter sends email through nodemailer
     var transporter = nodemailer.createTransport({
@@ -17,8 +17,8 @@ export const sellerApplication = async(name: string, username: string, descripti
     const mailOptions = {
       from: process.env.NEXT_PUBLIC_SMTP_USERNAME,
       to: process.env.NEXT_PUBLIC_SMTP_USERNAME,
-      subject: `${name}: Seller Application`,
-      text: `Username: ${username}, Why to become a seller? ${description}`
+      subject: `${name}: ${variant}`,
+      text: `Username: ${username}, ${variant}: ${description}`
     }
     const mailer = await transporter.sendMail(mailOptions);
     return mailer;

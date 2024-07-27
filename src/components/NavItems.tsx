@@ -5,12 +5,15 @@ import { useEffect, useRef, useState } from "react"
 import NavItem from "./NavItem"
 import fetchCategoriesAndCreateObject from "@/config/fakeapi-fetch"
 import { useOnClickOutside } from "@/hooks/use-on-click-outside"
+import { usePathname } from "next/navigation"
 
 const NavItems = () => {
   // fetchCategoriesAndCreateObject function must be called at the top of a functional component
   const PRODUCT_CATEGORIES = fetchCategoriesAndCreateObject();
   // Typescript generic declaration of state (type null or number with the default value of null) 
   const [activeIndex, setActiveIndex] = useState<null | number>(null)
+  const pathname = usePathname()
+
 
   // Closes active category if user presses Esc key
   useEffect(() => {
@@ -26,7 +29,12 @@ const NavItems = () => {
       document.removeEventListener('keydown', handler)
     }
   },[])
-  
+
+   // When an item is clicked in the menu and we navigate away, the menu closes
+   useEffect(() => {
+    setActiveIndex(null)
+  }, [pathname])
+
   // Boolean that checks whether any category is active or not
   const isAnyOpen = activeIndex !== null;
   // Checks if user clicked outside of the navbar through custom hook and sets active category to null

@@ -1,28 +1,16 @@
 // Client-side rendering to use event handlers
 "use client" 
 
-// Import the fetchCategoriesAndCreateObject function
-import fetchCategoriesAndCreateObject from "@/config/fakeapi-fetch";
+import fetchCategoriesAndCreateObject, { CategoryWithImages } from "@/config/fakeapi-fetch";
 import { Button } from "./ui/button";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from 'next/image';
 import Link from "next/link";
 
-// Declares Category type hardcopy since PRODUCT_CATEGORIES will be declared later
-type Category = {
-  label: string;
-  slug: string;
-  info: {
-    name: string;
-    href: string;
-    image: string;
-  }[];
-};;
-
 // Defines type of NavItemsProps interface (essential for TS)
 interface NavItemProps {
-  category: Category;
+  category: CategoryWithImages;
   handleOpen: () => void;
   isOpen: boolean;
   isAnyOpen: boolean;
@@ -56,10 +44,14 @@ const NavItem: React.FC<NavItemProps> = ({ isAnyOpen, category, handleOpen, isOp
                   {category.info.map((item) => (
                     <div key={item.name} className="group relative text-base sm:text-sm">
                       <div className="relative aspect-video overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                        <Image src={item.image} alt={item.name} fill className='object-center object-cover' />
+                        <Link href={item.href}>                        
+                          <Image src={item.image} alt={item.name} fill className='object-center object-cover' />
+                        </Link>
                       </div>
-                      <Link href={item.href} className='mt-6 block font-medium text-gray-900'>{item.name}</Link>
-                      <p className='mt-1' aria-hidden='true'>Shop now</p>
+                      <Link href={item.href} className='mt-6 block font-medium text-gray-900'>
+                        {item.name}
+                        <p className='mt-1 font-normal' aria-hidden='true'>Shop now</p>
+                      </Link>
                     </div>
                   ))}
                 </div>

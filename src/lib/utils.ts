@@ -27,3 +27,13 @@ export function currencyFormat(
   }).format(convertPrice);
 
 }
+
+// Function that checks if route ends with any string from an array of strings
+export function endsWithAny(str: string, endings: string[]): string | null {
+  for (const ending of endings) {
+    if (str.endsWith(ending)) {
+      return ending;
+    }
+  }
+  return null;
+}

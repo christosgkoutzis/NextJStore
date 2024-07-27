@@ -137,7 +137,7 @@ const Page = () => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectItem value="electronics">Electronics</SelectItem>
-                        <SelectItem value="jewlery">Jewlery</SelectItem>
+                        <SelectItem value="jewelery">Jewelery</SelectItem>
                         <SelectItem value="men's clothing">Men's Clothing</SelectItem>
                         <SelectItem value="women's clothing">Women's Clothing</SelectItem>
                       </SelectGroup>

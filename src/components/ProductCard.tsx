@@ -2,7 +2,7 @@
 
 import { currencyFormat } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { MailWarning, Plus, ShoppingBag, User } from "lucide-react";
+import { MailWarning, ShoppingBag, User } from "lucide-react";
 import ProductDetails from "./ProductDetails";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { wp_fetch } from "@/lib/wp-fetch";

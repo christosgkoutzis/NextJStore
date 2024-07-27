@@ -6,6 +6,7 @@ import ProductCard from "./ProductCard";
 import { useEffect, useState } from "react";
 import { buttonVariants } from "./ui/button";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 // Declares expected API response for a single product
 export interface UserProduct {
@@ -27,6 +28,12 @@ const ProductCards = ({ variant }: { variant: string }) => {
   const DEFAULT_PRODUCTS = fetchDefaultProducts();
   const [userProducts, setUserProducts] = useState<UserProduct[]>([]);
   const [route, setRoute] = useState<string>(variant);
+  // Gets dynamic pathname from hook (/products/[category])
+  const pathname = usePathname();
+  // Extract the category part of the current path (if exists) by spliting the pathname string to an array of strings using the "/" character as a dividing point
+  let category = pathname.split('/')[2];
+  // Removes encoded values from category's name (f.e. replaces %20 with space)
+  category = decodeURIComponent(category);
 
   useEffect(() => {
     const userProductFetch = async () => {
@@ -74,7 +81,24 @@ const ProductCards = ({ variant }: { variant: string }) => {
 
   return (
     <div className="flex gap-4 p-7 flex-wrap justify-center">
-      {route === 'products' ? DEFAULT_PRODUCTS.map((product) => (
+      {route === 'products' ?
+      // If a category exists in the route, only the DEFAULT_PRODUCTS of the category appear
+      category ?
+      DEFAULT_PRODUCTS.map((product) => (
+        product.category === category ?
+        <ProductCard
+          variant={route}
+          key={product.id}
+          id={product.id}
+          title={product.title}
+          price={product.price}
+          category={product.category}
+          image={product.image}
+          description={product.description}
+          seller='FakeAPIStore'
+        /> : null)) :
+        // There is no category, so all the DEFAULT_PRODUCTS will appear
+      DEFAULT_PRODUCTS.map((product) => (
         <ProductCard
           variant={route}
           key={product.id}
@@ -87,7 +111,8 @@ const ProductCards = ({ variant }: { variant: string }) => {
           seller='FakeAPIStore'
         />
       )) : null}
-      { (route === 'noUserProducts') ?
+      {// User route who has not uploaded any products
+       (route === 'noUserProducts') ?
         (
           <div className="py-20 mx-auto text-center flex flex-col items-center max-w-3xl">
             <h1 className="text-3xl font-bold tracking-tight text-gray-700 sm:text-5xl">
@@ -104,7 +129,26 @@ const ProductCards = ({ variant }: { variant: string }) => {
             </div>
           </div>
         )
+        // /products... routes
         : (route === 'products') ?
+        // If a category exists in the route, only the userProducts of the category appear
+        category ?
+        userProducts.map((product) => (
+          product.acf.status === 'accepted' && product.acf.category === category ?
+          <ProductCard
+            variant={route}
+            key={product.id}
+            id={product.id}
+            title={product.acf.name}
+            price={product.acf.price_in_usd}
+            category={product.acf.category}
+            image={product.acf.image}
+            description={product.acf.description}
+            seller={product.acf.user}
+            status={product.acf.status}
+          /> : null )) 
+          :
+        // There is no category, so all the userProducts will appear
         userProducts.map((product) => (
           (product.acf.status === 'accepted') ?
           <ProductCard
@@ -120,6 +164,7 @@ const ProductCards = ({ variant }: { variant: string }) => {
             status={product.acf.status}
           /> : null
         ))
+        // User route who has uploaded products
         :
         userProducts.map((product) => (
           <ProductCard

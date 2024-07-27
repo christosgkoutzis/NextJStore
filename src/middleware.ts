@@ -1,24 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { decrypt, encrypt } from './session'
+import { endsWithAny } from './lib/utils'
 
 // Specify protected and public routes
 const sellerProtectedRoutes = ['/sell', '/my-products']
 // The spread operator includes sellerProtectedRoutes array values to sessionProtectedRoutes
-const sessionProtectedRoutes = ['/password-reset', ...sellerProtectedRoutes]
+const sessionProtectedRoutes = ['/password-reset', '/thank-you', ...sellerProtectedRoutes]
 const noSessionProtectedRoutes = ['/login', '/register', '/forgot-password']
 const nonVerifiedSessionProtectedRoutes = ['/verified']
 const sellerCandidateProtectedRoutes = ['/become-a-seller']
-
-// Function that checks if route ends with any sessionProtectedRoute
-function endsWithAny(str: string, endings: string[]): string | null {
-  for (const ending of endings) {
-    if (str.endsWith(ending)) {
-      return ending;
-    }
-  }
-  return null;
-}
 
 // Updates user's session on next request
 export async function updateSession(session: any) {
