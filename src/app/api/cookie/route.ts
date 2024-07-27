@@ -15,7 +15,8 @@ export async function POST(req: NextRequest) {
     }
     else{
       console.error('Error while setting the cookie.')
-      return {error: 'Error while setting the cookie.'}
+      return new NextResponse(JSON.stringify({error: 'Error while setting the cookie.'}), {status: 401});
+
     }
   } catch (error) {
     console.error('Error during setting session cookie:', error);
@@ -33,11 +34,11 @@ export async function GET(req: NextRequest) {
       return new NextResponse(JSON.stringify(decryptedCookie), {status: 200});
     }
     else{
-      return new NextResponse(JSON.stringify(null), {status: 401});
+      return new NextResponse(JSON.stringify({error: 'Not authorized.'}), {status: 401});
     }
   } catch (error) {
     console.error('Error during getting session cookie:', error);
-    return new NextResponse(JSON.stringify(null), {status: 500});
+    return new NextResponse(JSON.stringify({error}), {status: 500});
   }
 } 
 
