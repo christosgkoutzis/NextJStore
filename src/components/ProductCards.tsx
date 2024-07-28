@@ -34,6 +34,7 @@ const ProductCards = ({ variant }: { variant: string }) => {
   let category = pathname.split('/')[2];
   // Removes encoded values from category's name (f.e. replaces %20 with space)
   category = decodeURIComponent(category);
+  console.log('category:', category, typeof category)
 
   useEffect(() => {
     const userProductFetch = async () => {
@@ -83,7 +84,7 @@ const ProductCards = ({ variant }: { variant: string }) => {
     <div className="flex gap-4 p-7 flex-wrap justify-center">
       {route === 'products' ?
       // If a category exists in the route, only the DEFAULT_PRODUCTS of the category appear
-      category ?
+      category !== 'undefined' ?
       DEFAULT_PRODUCTS.map((product) => (
         product.category === category ?
         <ProductCard
