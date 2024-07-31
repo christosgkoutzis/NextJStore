@@ -18,8 +18,8 @@ export const sendEmail = async(username: string, email: string, emailType: strin
       }
     } as any);
     // Reads the content of the HTML file (HTML template from unlayer.com) and replaces its placeholders with variables
-    let htmlTemplatePath = path.join(process.cwd(), 'public/email-template.html');
-    let htmlContent = await fs.readFile(htmlTemplatePath, 'utf-8');
+    let htmlTemplatePath = await fetch(`${process.env.NEXT_PUBLIC_DEPLOY_URL}/email-template.html`) 
+    let htmlContent = await htmlTemplatePath.text();
     htmlContent = htmlContent.replace('${USERNAME}', username);
     htmlContent = htmlContent.replace('${HOMEPAGE}', `${process.env.NEXT_PUBLIC_DEPLOY_URL}`);
     // Configures email introducing message according to emailType
