@@ -1,6 +1,6 @@
-<h1 align="center">Welcome to NextJStore :tshirt:</h1>
+<h1 align="center">Welcome to NextJStore 📣</h1>
 
-<h3 align="center">A full-stack digital marketplace ready to welcome your awesome products. </h3>
+<h3 align="center">A full-stack digital marketplace ready to welcome your awesome products! 👕 </h3>
 <p align="center">Deployment link (Vercel): https://nextjstore-six.vercel.app/</p>
 
 
