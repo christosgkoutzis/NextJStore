@@ -5,7 +5,7 @@
 
 
 <p align="center">
-  <img src="public/for-readme/home.PNG" alt="dashboard" width=80%>
+  <img src="public/for-readme/home.jpg" alt="dashboard" width=80%>
 </p>
 
 <p align="center">
