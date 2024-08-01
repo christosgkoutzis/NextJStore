@@ -108,10 +108,7 @@ const ProductDetails: React.FC<DetailsSchemaProps> = ({ id, title, price, catego
           <DrawerClose>
             <Button variant="outline" className="w-full">Hide details</Button>
           </DrawerClose>
-          <Button variant='default' className="flex items-center justify-center">
-            <Plus className="w-4 h-4 mr-1" />
-            <p>Add to cart</p>
-          </Button>
+          <AddToCart product={{ id, title, price, category, image, description, seller }}/>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
