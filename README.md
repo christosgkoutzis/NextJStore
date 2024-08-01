@@ -1,12 +1,13 @@
 <h1 align="center">Welcome to NextJStore 📣</h1>
 
 <h3 align="center">A full-stack digital marketplace ready to welcome your awesome products! 👕 </h3>
-<p align="center">Deployment link (Vercel): https://nextjstore-six.vercel.app/</p>
+<p align="center"><strong>Deployment link (Vercel):</strong> https://nextjstore-six.vercel.app/</p>
 
 
 <p align="center">
   <img src="public/for-readme/home.jpg" alt="dashboard" width=80%>
 </p>
+<br/>
 
 <p align="center">
     <img src="public/for-readme/ts.png" alt="ts" width=10%>
