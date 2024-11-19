@@ -34,7 +34,6 @@ const ProductCards = ({ variant }: { variant: string }) => {
   let category = pathname.split('/')[2];
   // Removes encoded values from category's name (f.e. replaces %20 with space)
   category = decodeURIComponent(category);
-  console.log('category:', category, typeof category)
 
   useEffect(() => {
     const userProductFetch = async () => {
